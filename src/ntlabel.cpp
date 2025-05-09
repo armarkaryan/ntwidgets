@@ -71,6 +71,7 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 void NTLabel::setx(int x)
 {
 	_x = x;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -84,6 +85,7 @@ int NTLabel::x() const
 void NTLabel::sety(int y)
 {
 	_y = y;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -97,6 +99,7 @@ int NTLabel::y() const
 void NTLabel::setColor(nt::color color)
 {
 	_color = color;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -110,6 +113,7 @@ nt::color NTLabel::color() const
 void NTLabel::setTransparent(bool transparent)
 {
 	_transparent = transparent;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -130,7 +134,7 @@ void NTLabel::draw() {
 	//
 	short r_text = _color.red; short g_text = _color.green; short b_text = _color.blue;
 	short r_bg = _bgColor.red; short g_bg = _bgColor.green; short b_bg = _bgColor.blue;
-
+{
 	// Создаем новый цвет в палитре
 	init_color(color_id, r_text * 1000 / 255, g_text * 1000 / 255, b_text * 1000 / 255);
 	init_color(colorBg_id, r_bg * 1000 / 255, g_bg * 1000 / 255, b_bg * 1000 / 255);
@@ -139,8 +143,13 @@ void NTLabel::draw() {
 	init_pair(9, color_id, colorBg_id);
 
 	attron(COLOR_PAIR(9));
+	// Предусмотреть, чтобы не печаталась часть строки, выходящая за пределы окна терминала!
+	// ...
 	mvprintw(_y, _x, "%s", _text.c_str());
 	attroff(COLOR_PAIR(9));
 
 	refresh();
+}
+	//
+	_changed = false;
 }
