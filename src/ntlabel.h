@@ -6,8 +6,8 @@
  *  \copyright  Arthur Markaryan
  */
 
-#ifndef NTLABEL_H
-#define NTLABEL_H
+#ifndef _NTLABEL_H_
+#define _NTLABEL_H_
 
 /*! \brief  Standard vector library */
 #include <vector>
@@ -19,11 +19,17 @@
 #include <stdexcept>
 /*! \brief  Standard algorithms */
 #include <algorithm>
+/*! \brief  Mutex library */
+#include <mutex>
 
+/*!	\brief	ncurses library */
 #include <ncurses.h>
 
 /*! \brief  Base NT object */
 #include "ntobject.h"
+
+/* Error codes */
+constexpr int ERR_RANGE = -2;  /*!< Range error - out of bounds */
 
 /*! \class      NTLabel
  *  \brief      Text label class for NT system.
@@ -125,23 +131,29 @@ public:
 	/*! \brief      Gets the image transparency flag
 	 *  \return     true if transparent false otherwise
 	 */
-	bool isTransparent() const;
+	bool transparent() const;
 
+	/*! \brief      Gets the Text Label changed flag
+	 *  \return     true if changed false otherwise
+	 */
 	bool isChanged() const {return _changed; };
 
 	/*! \brief     Draw the text label
-	 *  \return    ?? true if transparent false otherwise
+	 *  \return    OK if success,
+	 *            ERR_RANGE if out of terminal bounds,
+	 *            ERR if other error occurred
 	 */
-	void draw();
+	int draw();
 
 private:
-	std::string _text;		/*!< Image data storage */
-	unsigned short _x;		/*!< X coordinate */
-	unsigned short _y;		/*!< Y coordinate */
-	nt::color _color;		/*!< Text Color */
-	nt::color _bgColor;		/*!< Background Color */
-	bool _transparent;		/*!< Transparency flag */
-	bool _changed;			/*!< Label changed flag */
+	mutable std::mutex _mutex;	/*!< Thread-safe mutex */
+	std::string _text;			/*!< Text data */
+	unsigned short _x;			/*!< X coordinate */
+	unsigned short _y;			/*!< Y coordinate */
+	nt::color _color;			/*!< Text Color */
+	nt::color _bgColor;			/*!< Background Color */
+	bool _transparent;			/*!< Transparency flag */
+	bool _changed;				/*!< Label changed flag */
 };
 
-#endif // NTLABEL_H
+#endif // _NTLABEL_H_

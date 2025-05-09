@@ -28,17 +28,13 @@ int main(int argc, char* argv[])
 // User render
 	NTLabel Label1(0, "Label1", "Hello World!", 5, 5, {100, 100, 100}, {0, 0, 0}, false);
 
-/*for(int i=0; i<10; i++){
-	Label1.setx(i);
-}
-	if(Label1.isChanged())Label1.draw();*/
 
 // Exity programm
 	int x=0;
 	int ch;
 	while((ch = getch()) != ' '){
-		if(x<100)x++;else x=0;
 		Label1.setx(x);
+		if(x<100)x++;else x=0;
 		if(Label1.isChanged())Label1.draw();
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
