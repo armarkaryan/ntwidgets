@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 
 
 // Exity programm
-	int x=0;
+	//int x=0;
 
 	while(ch != ' '){
 
@@ -70,9 +70,10 @@ int main(int argc, char* argv[])
 			std::string timeString = oss.str();
 			Label1.setText(timeString);
 
+			// Check if neet to redraw
 			if(Label1.isChanged())Label1.draw();
 
-			//
+			// Возможен Deadlock?
 			ch = getch();
 		}
 
