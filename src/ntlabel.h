@@ -76,12 +76,12 @@ public:
 	/*! \brief      Sets the text data
 	 *  \param      text   Representing the new text data
 	 */
-	void setText(const std::string& image);
+	void setText(const std::string& text);
 
 	/*! \brief      Gets the text data
 	 *  \return     Constant reference to the text data
 	 */
-	std::string& text() const;
+	std::string text() const;
 
 	/*! \brief      Sets the X coordinate
 	 *  \param      x   New X coordinate value
