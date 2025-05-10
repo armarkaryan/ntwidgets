@@ -95,6 +95,26 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 	return *this;
 }
 
+/*! \brief      Sets the text data
+ *  \param      text   Representing the new text data
+ */
+void NTLabel::setText(const std::string& text)
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	_text = text;
+	_changed = true;
+	notifyObservers();
+}
+
+/*! \brief      Gets the text data
+ *  \return     Constant reference to the text data
+ */
+std::string NTLabel::text() const
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _text;
+}
+
 /*!	\brief		Set X coordinate position
  *	\param		x	New X coordinate value
  */
