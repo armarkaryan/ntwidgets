@@ -234,5 +234,7 @@ int NTImage::draw()
 				if(line[x] == ' ') mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), ' ');
 			}
 		}
+	refresh();
+	_changed = false;
 	return OK;
 }

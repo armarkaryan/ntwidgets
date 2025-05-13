@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 			// Check if neet to redraw
 			if(Label1.isChanged())Label1.draw();
 			//
-			if(Image1.isChanged())Image1.draw();
+			//if(Image1.isChanged())Image1.draw();
 
 			// Check if neet to redraw
 			//if(Label2.isChanged())Label2.draw();
