@@ -6,7 +6,8 @@
 #include "nttypes.h"
 #include "ntobject.h"
 #include "ntlabel.h"
-
+#include "ntimage.h"
+#include "digits_8x8.h"
 
 #include <sstream>  // для ostringstream
 #include <iomanip>  // для setw, setfill
@@ -39,7 +40,8 @@ int main(int argc, char* argv[])
 
 // User render
 	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, {100, 200, 100}, {0, 0, 0}, false);
-
+	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, {100, 200, 100}, {0, 0, 0}, false);
+	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 0, 0, {100, 200, 100}, {0, 0, 0}, false);
 
 // Exity programm
 	//int x=0;
@@ -70,8 +72,19 @@ int main(int argc, char* argv[])
 			std::string timeString = oss.str();
 			Label1.setText(timeString);
 
+			//oss.clear();
+			//oss << Image1.image().size();
+			//std::string temp = oss.str();
+			//std::string temp = "20";
+			//Label2.setText(temp);
+
 			// Check if neet to redraw
 			if(Label1.isChanged())Label1.draw();
+			//
+			if(Image1.isChanged())Image1.draw();
+
+			// Check if neet to redraw
+			//if(Label2.isChanged())Label2.draw();
 
 			// Возможен Deadlock?
 			ch = getch();

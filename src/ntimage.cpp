@@ -7,9 +7,11 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 	: NTObject(parent, name),
 	_image({""}),
 	_x(0), _y(0),
-	_colorPair(nt::DEFAULT),
-	_width(0), _height(0),
-	_transparent(true)
+	_color(nt::color({255, 255, 255})),
+	_bgColor(nt::color({0, 0, 0})),
+	_transparent(true),
+	_changed(true),
+	_width(0), _height(0)
 {
     // To do... image, width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -17,26 +19,31 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 }
 
 // Полный конструктор
-NTImage::NTImage(NTObject* parent, const std::string& name,
-               const std::vector<std::string>& image,
-			   int x, int y, nt::ColorPair colorPair)
+NTImage::NTImage(NTObject *parent, const std::string& name,
+			   const std::vector<std::string>& image,	//  Может быть сделать структуру?
+			   int x, int y, nt::color color, nt::color bgColor, bool transparent)
 	: NTObject(parent, name),
 	_image(image),
 	_x(x), _y(y),
-	_colorPair(colorPair)
+	_color(color),
+	_bgColor(bgColor),
+	_transparent(transparent)
 {
     // To do... image, width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
+	//_height = image.size();
 	notifyObservers();
 }
 
 // Конструктор копирования
 NTImage::NTImage(const NTImage& other)
-    : NTObject(other.parent(), other.name()),
-      _image(other._image),
-      _x(other._x),
-      _y(other._y),
-	  _colorPair(other._colorPair)
+	: NTObject(other.parent(), other.name()),
+	_image(other._image),
+	_x(other._x),
+	_y(other._y),
+	_color(other._color),
+	_bgColor(other._bgColor),
+	_transparent(other._transparent)
 {
     // To do... width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -58,10 +65,27 @@ NTImage& NTImage::operator=(const NTImage& other)
 		_image = other._image;
 		_x = other._x;
 		_y = other._y;
-        _colorPair = other._colorPair;
+		_color = other._color;
+		_bgColor = other._bgColor;
+		_transparent = other._transparent;
 	}
 	notifyObservers();
 	return *this;
+}
+
+//
+void NTImage::setImage(const std::vector<std::string>& image)
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	_image = image;
+	notifyObservers();
+}
+
+//
+const std::vector<std::string>& NTImage::image() const
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _image;
 }
 
 //
@@ -103,56 +127,44 @@ void NTImage::setPosition(int x, int y)
 	notifyObservers();
 }
 
-//
-unsigned int NTImage::width() const
+/*!	\brief		Set text color
+ *	\param		color	New text color value
+ */
+void NTImage::setColor(nt::color color)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	return _width;
-}
-
-//
-unsigned int NTImage::height() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _height;
-}
-
-//
-void NTImage::setImage(const std::vector<std::string>& image)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-    _image = image;
+	_color = color;
+	_changed = true;
 	notifyObservers();
 }
 
-//
-const std::vector<std::string>& NTImage::image() const
+/*!	\brief		Get text color
+ *	\return		Current text color value
+ */
+nt::color NTImage::color() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	return _image;
+	return _color;
 }
 
-//
-void NTImage::setColorPair(nt::ColorPair colorPair)
+/*!	\brief		Set background color
+ *	\param		bgColor	New background color value
+ */
+void NTImage::setBgColor(nt::color bgColor)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-    _colorPair = colorPair;
+	_bgColor = bgColor;
+	_changed = true;
 	notifyObservers();
 }
 
-//
-nt::ColorPair NTImage::colorPair() const
+/*!	\brief		Get background color
+ *	\return		Current background color value
+ */
+nt::color NTImage::bgColor() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	return _colorPair;
-}
-
-//
-void NTImage::setWidth(unsigned int width)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_width = width;
-	notifyObservers();
+	return _bgColor;
 }
 
 //
@@ -170,3 +182,57 @@ bool NTImage::transparent() const
 	return _transparent;
 }
 
+//
+unsigned int NTImage::width() const
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _width;
+}
+
+//
+unsigned int NTImage::height() const
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _height;
+}
+
+//
+int NTImage::draw()
+{
+	//std::lock_guard<std::mutex> lock(_mutex);
+/*
+	// Get terminal dimensions
+	int max_y, max_x;
+	getmaxyx(stdscr, max_y, max_x);
+
+	// Check if position is out of bounds
+	if (_y < 0 || _y >= max_y || _x < 0 || _x >= max_x) {
+		return ERR_RANGE;  // Position completely out of bounds
+	}
+
+	// Calculate visible portion of text
+	size_t visible_length = _width;
+	if (_x + visible_length > static_cast<size_t>(max_x)) {
+		visible_length = max_x - _x;
+	}
+
+	// If no visible characters left
+	if (visible_length <= 0) {
+		return ERR_RANGE;
+	}
+*/
+	//for (size_t y = 0; y < image().size() && (this->y() + static_cast<int>(y)) < term_height; y++) {
+	for (size_t y = 0; y < image().size() && (this->y() + static_cast<int>(y)) < 20; y++) {
+			if (this->y() + static_cast<int>(y) < 0) continue;
+
+			const std::string& line = this->image()[y];
+			//for (size_t x = 0; x < line.size() && (this->x() + static_cast<int>(x)) < term_width; x++) {
+			for (size_t x = 0; x < line.size() && (this->x() + static_cast<int>(x)) < 80; x++) {
+				if (this->x() + static_cast<int>(x) < 0) continue;
+				//mvaddch(img->y() + static_cast<int>(y), img->x() + static_cast<int>(x), line[x]);
+				if(line[x] == 'X') mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), ' ' | A_REVERSE);
+				if(line[x] == ' ') mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), ' ');
+			}
+		}
+	return OK;
+}

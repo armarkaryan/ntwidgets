@@ -22,8 +22,14 @@
 /*! \brief  Mutex library */
 #include <mutex>
 
+/*!	\brief	ncurses library */
+#include <ncurses.h>
+
 /*! \brief  Base NT object */
 #include "ntobject.h"
+
+/* Error codes */
+//constexpr int ERR_RANGE = -2;  /*!< Range error - out of bounds */
 
 /*! \class      NTImage
  *  \brief      Image class for NT system.
@@ -45,11 +51,13 @@ public:
 	 *  \param      image       Vector of strings representing image data
 	 *  \param      x           X coordinate of the image
 	 *  \param      y           Y coordinate of the image
-	 *  \param      colorPair   Color pair for the image
+	 *  \param      color		Text color for the image
+	 *  \param      bgColor		Background color for the image
+	 *	\param      transparent	Transparent flag for the image
 	 */
 	NTImage(NTObject *parent, const std::string& name,
 			const std::vector<std::string>& image,
-			int x, int y, nt::ColorPair colorPair);
+			int x, int y, nt::color color, nt::color bgColor, bool transparent);
 
 	/*! \brief  Destructor */
 	~NTImage();
@@ -101,15 +109,40 @@ public:
 	 */
 	void setPosition(int x, int y);
 
-	/*! \brief      Sets the color pair
-	 *  \param      colorPair   New color pair value
+	/*!	\brief		Set image color
+	 *	\param		color	New image color value
 	 */
-	void setColorPair(nt::ColorPair colorPair);
+	void setColor(nt::color color);
 
-	/*! \brief      Gets the color pair
-	 *  \return     Current color pair value
+	/*!	\brief		Get image color
+	 *	\return		Current image color value
 	 */
-	nt::ColorPair colorPair() const;
+	nt::color color() const;
+
+	/*!	\brief		Set background color
+	 *	\param		bgColor	New background color value
+	 */
+	void setBgColor(nt::color bgColor);
+
+	/*!	\brief		Get background color
+	 *	\return		Current background color value
+	 */
+	nt::color bgColor() const;
+
+	/*! \brief      Sets the transparency flag
+	 *  \param      transparent New transparency value
+	 */
+	void setTransparent(bool transparent);
+
+	/*! \brief      Gets the image transparency flag
+	 *  \return     true if transparent false otherwise
+	 */
+	bool transparent() const;
+
+	/*! \brief      Gets the image changed flag
+	 *  \return     true if changed false otherwise
+	 */
+	bool isChanged() const {return _changed; };
 
 	/*! \brief      Sets the image width
 	 *  \param      width   New width value
@@ -131,25 +164,24 @@ public:
 	 */
 	unsigned int height() const;
 
-	/*! \brief      Sets the transparency flag
-	 *  \param      transparent New transparency value
+	/*! \brief     Draw the image
+	 *  \return    OK if success,
+	 *            ERR_RANGE if out of terminal bounds,
+	 *            ERR if other error occurred
 	 */
-	void setTransparent(bool transparent);
-
-	/*! \brief      Gets the image transparency flag
-	 *  \return     true if transparent false otherwise
-	 */
-	bool transparent() const;
+	int draw();
 
 private:
 	mutable std::mutex _mutex;			/*!< Thread-safe mutex */
 	std::vector<std::string> _image;	/*!< Image data storage */
 	unsigned short _x;					/*!< X coordinate */
 	unsigned short _y;					/*!< Y coordinate */
-	nt::ColorPair _colorPair;			/*!< Color pair attributes */
+	nt::color _color;					/*!< Text Color */
+	nt::color _bgColor;					/*!< Background Color */
+	bool _transparent;					/*!< Transparency flag */
+	bool _changed;						/*!< Label changed flag */
 	unsigned short _width;				/*!< Image width */
 	unsigned short _height;				/*!< Image height */
-	bool _transparent;					/*!< Transparency flag */
 };
 
 #endif // _NTIMAGE_H_
