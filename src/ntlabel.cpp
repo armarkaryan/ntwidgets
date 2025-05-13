@@ -57,7 +57,8 @@ NTLabel::NTLabel(const NTLabel& other)
 	_color = other._color;
 	_bgColor = other._bgColor;
 	_transparent = other._transparent;
-	_changed = other._changed;
+	//_changed = other._changed;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -83,7 +84,8 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 		_color = other._color;
 		_bgColor = other._bgColor;
 		_transparent = other._transparent;
-		_changed = other._changed;
+		//_changed = other._changed;
+		_changed = true;
 	}
 	notifyObservers();
 	return *this;
@@ -126,7 +128,7 @@ int NTLabel::draw() {
 
 	// Check if position is out of bounds
 	if (_y < 0 || _y >= max_y || _x < 0 || _x >= max_x) {
-		return ERR_RANGE;  // Position completely out of bounds
+		return NT_ERR_RANGE;  // Position completely out of bounds
 	}
 
 	// Calculate visible portion of text
@@ -137,7 +139,7 @@ int NTLabel::draw() {
 
 	// If no visible characters left
 	if (visible_length <= 0) {
-		return ERR_RANGE;
+		return NT_ERR_RANGE;
 	}
 
 	// Prepare colors
@@ -162,9 +164,24 @@ int NTLabel::draw() {
 	}
 
 	// Draw visible portion
-	attron(COLOR_PAIR(9));
-	int result = mvprintw(_y, _x, "%.*s", static_cast<int>(visible_length), _text.c_str());
-	attroff(COLOR_PAIR(9));
+	int result = ERR;
+
+	// Если не прозрачный, то выводим с заданным цветом и фоном
+	if(_transparent == false){
+		attron(COLOR_PAIR(9));
+		result = mvprintw(_y, _x, "%.*s", static_cast<int>(visible_length), _text.c_str());
+		attroff(COLOR_PAIR(9));
+	}else{
+		// Если прозрачный, то с текущими атрибутами знакоместа
+		for(int i=0; i<static_cast<int>(visible_length); i++){
+			// Не стираем пробелами то, что было ранее в данной позиции
+			if(_text.at(i) == ' '){
+				continue;
+			}else{
+				result = mvaddch(_y, _x+i, _text.at(i));
+			}
+		}
+	}
 
 	if (result == ERR) {
 		return ERR;
