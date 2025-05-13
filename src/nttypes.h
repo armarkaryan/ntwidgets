@@ -15,7 +15,9 @@
 #include <vector>
 
 /* Error codes */
-constexpr int ERR_RANGE = -2;  /*!< Range error - out of bounds */
+constexpr int NT_OK		= 0;	/*!< No error - OK */
+constexpr int NT_ERR	= -1;	/*!< General error - ERR */
+constexpr int NT_ERR_RANGE = -2;	/*!< Range error - out of bounds */
 
 /*!
  *  \namespace nt
