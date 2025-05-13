@@ -1,38 +1,60 @@
-#ifndef DIGITS_16X16_H
-#define DIGITS_16X16_H
+#ifndef _DIGITS_16X16_H_
+#define _DIGITS_16X16_H_
+
+/*!	\brief	Standard vector library */
 #include <vector>
+/*!	\brief	Standard string library */
 #include <string>
 
+/*!	\brief	Base NT types */
+#include "nttypes.h"
+
 // Digit "0"
-const std::vector<std::string> digit_16x16_0 = {
-    "                ",
-    "     XXXXX      ",
-    "    X     X     ",
-    "   X     X X    ",
-    "   X     X X    ",
-    "   X     X  X   ",
-    "   X    X   X   ",
-    "   X    X    X  ",
-    "  X    X     X  ",
-    "  X    X     X  ",
-    "  X    X     X  ",
-    "   X  X      X  ",
-    "    X X     X   ",
-    "     XXXXXXX    ",
-    "                ",
-    "                "
+const struct nt::Image digit_16x16_0 = {
+	{	// img
+		"                ",
+		"     XXXXX      ",
+		"    X     X     ",
+		"   X     X X    ",
+		"   X     X X    ",
+		"   X     X  X   ",
+		"   X    X   X   ",
+		"   X    X    X  ",
+		"  X    X     X  ",
+		"  X    X     X  ",
+		"  X    X     X  ",
+		"   X  X      X  ",
+		"    X X     X   ",
+		"     XXXXXXX    ",
+		"                ",
+		"                "
+	},
+	16,	// width
+	16	// height
 };
 
 // Digit "1"
-const std::vector<std::string> digit_16x16_1 = {
-    "    X   ",
-    "   XX   ",
-    "  X X   ",
-    "    X   ",
-    "    X   ",
-    "    X   ",
-    "    X   ",
-    "   XXX  "
+const struct nt::Image digit_16x16_1 = {
+	{	// img
+		"                ",
+		"          X     ",
+		"         XX     ",
+		"        X X     ",
+		"       X  X     ",
+		"     XX  X      ",
+		"         X      ",
+		"        X       ",
+		"        X       ",
+		"        X       ",
+		"       X        ",
+		"       X        ",
+		"       X        ",
+		"       X        ",
+		"       X        ",
+		"                "
+	},
+	16,	// width
+	16	// height
 };
 
 // Digit "2"
@@ -132,6 +154,7 @@ const std::vector<std::string> digit_16x16_9 = {
 };
 
 // Array of digits image from 0 to 9
+/*
 const std::vector<std::string> digits_16x16[] = {
     digit_16x16_0,
     digit_16x16_1,
@@ -144,5 +167,19 @@ const std::vector<std::string> digits_16x16[] = {
     digit_16x16_8,
     digit_16x16_9
 };
+*/
+// Array of digits image from 0 to 9
+const std::vector<nt::Image> digits_16x16 = {
+	digit_16x16_0,
+	digit_16x16_1/*,
+	digit_16x16_2,
+	digit_16x16_3,
+	digit_16x16_4,
+	digit_16x16_5,
+	digit_16x16_6,
+	digit_16x16_7,
+	digit_16x16_8,
+	digit_16x16_9*/
+};
 
-#endif // DIGITS_16X16_H
+#endif // _DIGITS_16X16_H_

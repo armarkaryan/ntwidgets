@@ -1,9 +1,12 @@
-#ifndef DIGITS_8x8_H
-#define DIGITS_8x8_H
+#ifndef _DIGITS_8x8_H_
+#define _DIGITS_8x8_H_
 
+/*!	\brief	Standard vector library */
 #include <vector>
+/*!	\brief	Standard string library */
 #include <string>
 
+/*!	\brief	Base NT types */
 #include "nttypes.h"
 
 // Digit "0"
@@ -180,4 +183,4 @@ const std::vector<nt::Image> digits_8x8 = {
 	digit_8x8_9
 };
 
-#endif	// DIGITS_8x8_H
+#endif	// _DIGITS_8x8_H_
