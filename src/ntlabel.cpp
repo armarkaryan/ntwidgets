@@ -1,4 +1,4 @@
-/*!	\file		NTLabel.cpp
+/*!	\file		ntlabel.cpp
  *	\brief		Implementation of thread-safe NTLabel class
  *	\details	Contains method implementations for text label handling in the NT system
  *	\author		Arthur Markaryan
@@ -13,13 +13,12 @@
  *	\param		name	Label name (default: empty string)
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name)
-	: NTObject(parent, name),
-	_text(""),
-	_x(0), _y(0),
-	_color(nt::color({255, 255, 255})),
-	_bgColor(nt::color({0, 0, 0})),
-	_transparent(false),
-	_changed(true)
+	: NTGraphicObject(parent, name,
+	0, 0,							// x, y
+	nt::color({255, 255, 255}),		// color
+	nt::color({0, 0, 0}),			// bgColor
+	false),							// transparent
+	_text("")						// Empty text
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	notifyObservers();
@@ -36,15 +35,10 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
  *	\param		transparent	Initial transparency flag
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name,
-			   const std::string& text,
-			   int x, int y, nt::color color, nt::color bgColor, bool transparent)
-	: NTObject(parent, name),
-	_text(text),
-	_x(x), _y(y),
-	_color(color),
-	_bgColor(bgColor),
-	_transparent(transparent),
-	_changed(true)
+				const std::string& text, int x, int y,
+				nt::color color, nt::color bgColor, bool transparent)
+	: NTGraphicObject(parent, name, x, y, color, bgColor, transparent),  // передаём всё родителю
+	_text(text)  // инициализируем только своё поле
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	notifyObservers();
@@ -63,7 +57,8 @@ NTLabel::NTLabel(const NTLabel& other)
 	_color = other._color;
 	_bgColor = other._bgColor;
 	_transparent = other._transparent;
-	_changed = other._changed;
+	//_changed = other._changed;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -89,7 +84,8 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 		_color = other._color;
 		_bgColor = other._bgColor;
 		_transparent = other._transparent;
-		_changed = other._changed;
+		//_changed = other._changed;
+		_changed = true;
 	}
 	notifyObservers();
 	return *this;
@@ -115,106 +111,6 @@ std::string NTLabel::text() const
 	return _text;
 }
 
-/*!	\brief		Set X coordinate position
- *	\param		x	New X coordinate value
- */
-void NTLabel::setx(int x)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_x = x;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get X coordinate position
- *	\return		Current X coordinate value
- */
-int NTLabel::x() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _x;
-}
-
-/*!	\brief		Set Y coordinate position
- *	\param		y	New Y coordinate value
- */
-void NTLabel::sety(int y)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_y = y;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get Y coordinate position
- *	\return		Current Y coordinate value
- */
-int NTLabel::y() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _y;
-}
-
-/*!	\brief		Set text color
- *	\param		color	New text color value
- */
-void NTLabel::setColor(nt::color color)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_color = color;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get text color
- *	\return		Current text color value
- */
-nt::color NTLabel::color() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _color;
-}
-
-/*!	\brief		Set background color
- *	\param		bgColor	New background color value
- */
-void NTLabel::setBgColor(nt::color bgColor)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_bgColor = bgColor;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get background color
- *	\return		Current background color value
- */
-nt::color NTLabel::bgColor() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _bgColor;
-}
-
-/*!	\brief		Set transparency flag
- *	\param		transparent	New transparency value
- */
-void NTLabel::setTransparent(bool transparent)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_transparent = transparent;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get transparency flag
- *	\return		true if transparent, false otherwise
- */
-bool NTLabel::transparent() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _transparent;
-}
-
 /*!	\brief		Draw the text label
  *	\details	Thread-safe rendering of the label using ncurses library.
  *			Only visible characters within terminal bounds are drawn.
@@ -232,7 +128,7 @@ int NTLabel::draw() {
 
 	// Check if position is out of bounds
 	if (_y < 0 || _y >= max_y || _x < 0 || _x >= max_x) {
-		return ERR_RANGE;  // Position completely out of bounds
+		return NT_ERR_RANGE;  // Position completely out of bounds
 	}
 
 	// Calculate visible portion of text
@@ -243,7 +139,7 @@ int NTLabel::draw() {
 
 	// If no visible characters left
 	if (visible_length <= 0) {
-		return ERR_RANGE;
+		return NT_ERR_RANGE;
 	}
 
 	// Prepare colors
@@ -268,9 +164,24 @@ int NTLabel::draw() {
 	}
 
 	// Draw visible portion
-	attron(COLOR_PAIR(9));
-	int result = mvprintw(_y, _x, "%.*s", static_cast<int>(visible_length), _text.c_str());
-	attroff(COLOR_PAIR(9));
+	int result = ERR;
+
+	// Если не прозрачный, то выводим с заданным цветом и фоном
+	if(_transparent == false){
+		attron(COLOR_PAIR(9));
+		result = mvprintw(_y, _x, "%.*s", static_cast<int>(visible_length), _text.c_str());
+		attroff(COLOR_PAIR(9));
+	}else{
+		// Если прозрачный, то с текущими атрибутами знакоместа
+		for(int i=0; i<static_cast<int>(visible_length); i++){
+			// Не стираем пробелами то, что было ранее в данной позиции
+			if(_text.at(i) == ' '){
+				continue;
+			}else{
+				result = mvaddch(_y, _x+i, _text.at(i));
+			}
+		}
+	}
 
 	if (result == ERR) {
 		return ERR;

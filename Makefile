@@ -7,7 +7,9 @@ OBJ_DIR := obj
 
 # Автоматически находим все .cpp файлы в src/
 SOURCES	:=	$(SRC_DIR)/ntobject.cpp \
+			$(SRC_DIR)/ntgraphicobject.cpp \
 			$(SRC_DIR)/ntlabel.cpp \
+			$(SRC_DIR)/ntimage.cpp \
 			$(SRC_DIR)/ntwidgets.cpp
 
 
