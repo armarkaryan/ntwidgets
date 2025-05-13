@@ -14,6 +14,9 @@
 /*! \brief  Standard vector library */
 #include <vector>
 
+/* Error codes */
+constexpr int ERR_RANGE = -2;  /*!< Range error - out of bounds */
+
 /*!
  *  \namespace nt
  *  \brief     Namespace containing core types for NT project

@@ -28,9 +28,6 @@
 /*! \brief  Base NT object */
 #include "ntobject.h"
 
-/* Error codes */
-//constexpr int ERR_RANGE = -2;  /*!< Range error - out of bounds */
-
 /*! \class      NTImage
  *  \brief      Image class for NT system.
  *  \details    Represents an image object with position, color attributes and transparency support.

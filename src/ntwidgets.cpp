@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
 // User render
 	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, {100, 200, 100}, {0, 0, 0}, false);
 	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, {100, 200, 100}, {0, 0, 0}, false);
+	NTLabel Label3(0, "Label3");
 	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 0, 0, {100, 200, 100}, {0, 0, 0}, false);
 
 // Exity programm
@@ -81,7 +82,7 @@ int main(int argc, char* argv[])
 			// Check if neet to redraw
 			if(Label1.isChanged())Label1.draw();
 			//
-			//if(Image1.isChanged())Image1.draw();
+			if(Image1.isChanged())Image1.draw();
 
 			// Check if neet to redraw
 			//if(Label2.isChanged())Label2.draw();

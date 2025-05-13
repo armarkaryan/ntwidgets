@@ -27,7 +27,8 @@ NTImage::NTImage(NTObject *parent, const std::string& name,
 	_x(x), _y(y),
 	_color(color),
 	_bgColor(bgColor),
-	_transparent(transparent)
+	_transparent(transparent),
+	_changed(true)
 {
     // To do... image, width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -43,7 +44,8 @@ NTImage::NTImage(const NTImage& other)
 	_y(other._y),
 	_color(other._color),
 	_bgColor(other._bgColor),
-	_transparent(other._transparent)
+	_transparent(other._transparent),
+	_changed(true)
 {
     // To do... width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -68,6 +70,7 @@ NTImage& NTImage::operator=(const NTImage& other)
 		_color = other._color;
 		_bgColor = other._bgColor;
 		_transparent = other._transparent;
+		_changed = true;	// !!!
 	}
 	notifyObservers();
 	return *this;
@@ -78,6 +81,7 @@ void NTImage::setImage(const std::vector<std::string>& image)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	_image = image;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -93,6 +97,7 @@ void NTImage::setx(int x)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	_x = x;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -108,6 +113,7 @@ void NTImage::sety(int y)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	_y = y;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -124,6 +130,7 @@ void NTImage::setPosition(int x, int y)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_x = x;
 	_y = y;
+	_changed = true;
 	notifyObservers();
 }
 
@@ -172,6 +179,7 @@ void NTImage::setTransparent(bool transparent)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	_transparent = transparent;
+	_changed = true;
 	notifyObservers();
 }
 

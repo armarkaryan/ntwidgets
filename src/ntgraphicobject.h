@@ -17,9 +17,6 @@
 /*!	\brief	Base NT types */
 #include "nttypes.h"
 
-/* Error codes */
-constexpr int ERR_RANGE = -2;  /*!< Range error - out of bounds */
-
 class NTGraphicObject : public NTObject {
 public:
 	/*!	\brief		Default constructor
