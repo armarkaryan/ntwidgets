@@ -20,6 +20,7 @@ std::atomic<int> ch;
 
 int main(int argc, char* argv[])
 {
+	std::cout << "Program started." << std::endl;
 // ncurses init
 	initscr();
 	cbreak();
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
 
 // User render
 	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, {100, 200, 100}, {0, 0, 0}, false);
-	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, {100, 200, 100}, {0, 0, 0}, false);
+	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, {100, 200, 100}, {0, 0, 0}, true);
 	NTLabel Label3(0, "Label3");
 	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 0, 0, {100, 200, 100}, {0, 0, 0}, false);
 
@@ -76,8 +77,8 @@ int main(int argc, char* argv[])
 			//oss.clear();
 			//oss << Image1.image().size();
 			//std::string temp = oss.str();
-			//std::string temp = "20";
-			//Label2.setText(temp);
+			std::string temp = "2  0";
+			Label2.setText(temp);
 
 			// Check if neet to redraw
 			if(Label1.isChanged())Label1.draw();
@@ -85,7 +86,7 @@ int main(int argc, char* argv[])
 			if(Image1.isChanged())Image1.draw();
 
 			// Check if neet to redraw
-			//if(Label2.isChanged())Label2.draw();
+			if(Label2.isChanged())Label2.draw();
 
 			// Возможен Deadlock?
 			ch = getch();
