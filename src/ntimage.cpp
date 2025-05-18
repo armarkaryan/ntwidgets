@@ -208,14 +208,14 @@ unsigned int NTImage::height() const
 int NTImage::draw()
 {
 	//std::lock_guard<std::mutex> lock(_mutex);
-/*
+
 	// Get terminal dimensions
 	int max_y, max_x;
 	getmaxyx(stdscr, max_y, max_x);
 
 	// Check if position is out of bounds
 	if (_y < 0 || _y >= max_y || _x < 0 || _x >= max_x) {
-		return ERR_RANGE;  // Position completely out of bounds
+		return NT_ERR_RANGE;  // Position completely out of bounds
 	}
 
 	// Calculate visible portion of text
@@ -226,9 +226,33 @@ int NTImage::draw()
 
 	// If no visible characters left
 	if (visible_length <= 0) {
-		return ERR_RANGE;
+		return NT_ERR_RANGE;
 	}
-*/
+
+	// Prepare colors
+	short color_id = 102;
+	short colorBg_id = 103;
+
+	short r_text = _color.red;
+	short g_text = _color.green;
+	short b_text = _color.blue;
+	short r_bg = _bgColor.red;
+	short g_bg = _bgColor.green;
+	short b_bg = _bgColor.blue;
+
+	// Initialize colors
+	if (init_color(color_id, r_text * 1000 / 255, g_text * 1000 / 255, b_text * 1000 / 255) == ERR ||
+		init_color(colorBg_id, r_bg * 1000 / 255, g_bg * 1000 / 255, b_bg * 1000 / 255) == ERR) {
+		return ERR;
+	}
+
+	if (init_pair(2, color_id, colorBg_id) == ERR) {
+		return ERR;
+	}
+
+	// Draw visible portion
+	int result = ERR;
+attron(COLOR_PAIR(2));
 	//for (size_t y = 0; y < image().size() && (this->y() + static_cast<int>(y)) < term_height; y++) {
 	for (size_t y = 0; y < image().size() && (this->y() + static_cast<int>(y)) < 20; y++) {
 			if (this->y() + static_cast<int>(y) < 0) continue;
@@ -242,7 +266,8 @@ int NTImage::draw()
 				if(line[x] == ' ') mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), ' ');
 			}
 		}
+attroff(COLOR_PAIR(2));
 	refresh();
 	_changed = false;
-	return OK;
+	return result;
 }

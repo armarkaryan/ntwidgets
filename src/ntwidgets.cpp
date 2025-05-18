@@ -5,6 +5,7 @@
 
 #include "nttypes.h"
 #include "ntobject.h"
+//#include "ntpalette.h"
 #include "ntlabel.h"
 #include "ntimage.h"
 #include "digits_8x8.h"
@@ -21,6 +22,8 @@ std::atomic<int> ch;
 int main(int argc, char* argv[])
 {
 	std::cout << "Program started." << std::endl;
+// Test Color
+//	NTColor Color1;
 // ncurses init
 	initscr();
 	cbreak();
@@ -37,13 +40,28 @@ int main(int argc, char* argv[])
 	}
 
 	start_color();
+	printw("Color pair max count: %d\n", COLOR_PAIRS);
 	use_default_colors();
 
 // User render
-	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, {100, 200, 100}, {0, 0, 0}, false);
-	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, {100, 200, 100}, {0, 0, 0}, true);
+	// Colors
+	unsigned char color_time_id = 0;
+	nt::color color_Time = nt::color({255, 0, 255});
+	init_color(color_time_id, color_Time.red * 1000 / 255, color_Time.green * 1000 / 255, color_Time.blue * 1000 / 255);
+
+	unsigned char color_bg_id = 1;
+	nt::color color_bg_Time = nt::color({0, 255, 0});
+	init_color(color_bg_id, color_bg_Time.red * 1000 / 255, color_bg_Time.green * 1000 / 255, color_bg_Time.blue * 1000 / 255);
+
+	unsigned char color_pair_Time = 1;
+	init_pair(color_pair_Time, color_time_id, color_bg_id);
+
+	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, color_pair_Time, A_BOLD, false);
+	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, color_pair_Time, 0, false);
 	NTLabel Label3(0, "Label3");
-	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 0, 0, {100, 200, 100}, {0, 0, 0}, false);
+
+	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 1, 1, {0, 100, 100}, {0, 0, 0}, false);
+	NTImage Image2(0, "hh_lo", digits_8x8[1].img, 10, 10, {100, 200, 100}, {0, 0, 0}, false);
 
 // Exity programm
 	//int x=0;
@@ -84,6 +102,7 @@ int main(int argc, char* argv[])
 			if(Label1.isChanged())Label1.draw();
 			//
 			if(Image1.isChanged())Image1.draw();
+			//if(Image2.isChanged())Image2.draw();
 
 			// Check if neet to redraw
 			if(Label2.isChanged())Label2.draw();

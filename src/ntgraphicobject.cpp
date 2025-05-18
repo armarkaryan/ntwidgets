@@ -14,7 +14,8 @@
  */
 NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name)
 	: NTObject(parent, name), _x(0), _y(0),
-	_color({255, 255, 255}), _bgColor({0, 0, 0}), _transparent(false),
+	_colorPair(0), _attr(0),
+	_transparent(false),
 	_changed(true) {}
 
 /*!	\brief		Parameterized constructor
@@ -22,14 +23,14 @@ NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name)
  *	\param		name		Graphic Object name
  *	\param		x			Initial X position
  *	\param		y			Initial Y position
- *	\param		color		Initial text color
- *	\param		bgColor		Initial background color
+ *	\param		colorPair	Color pair to draw from the palette
+ *	\param		attr		Attr of Graphic Object
  *	\param		transparent	Initial transparency flag
  */
 NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name,
-			   int x, int y, nt::color color, nt::color bgColor, bool transparent)
+			   int x, int y, unsigned char colorPair, int attr, bool transparent)
 	: NTObject(parent, name), _x(x), _y(y),
-	_color(color), _bgColor(bgColor), _transparent(transparent),
+	_colorPair(colorPair), _attr(attr), _transparent(transparent),
 	_changed(true) {}
 
 /*!	\brief		Copy constructor
@@ -42,8 +43,8 @@ NTGraphicObject::NTGraphicObject(const NTGraphicObject& other)
 	//_text = other._text;
 	_x = other._x;
 	_y = other._y;
-	_color = other._color;
-	_bgColor = other._bgColor;
+	_colorPair = other._colorPair;
+	_attr = other._attr;
 	_transparent = other._transparent;
 	_changed = other._changed;
 	notifyObservers();
@@ -68,8 +69,8 @@ NTGraphicObject& NTGraphicObject::operator=(const NTGraphicObject& other)
 		//_text = other._text;
 		_x = other._x;
 		_y = other._y;
-		_color = other._color;
-		_bgColor = other._bgColor;
+		_colorPair = other._colorPair;
+		_attr = other._attr;
 		_transparent = other._transparent;
 		_changed = other._changed;
 	}
@@ -132,10 +133,10 @@ void NTGraphicObject::setPosition(int x, int y)
 /*!	\brief		Set text color
  *	\param		color	New text color value
  */
-void NTGraphicObject::setColor(nt::color color)
+void NTGraphicObject::setColorPair(unsigned char colorPair)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	_color = color;
+	_colorPair = colorPair;
 	_changed = true;
 	notifyObservers();
 }
@@ -143,30 +144,10 @@ void NTGraphicObject::setColor(nt::color color)
 /*!	\brief		Get text color
  *	\return		Current text color value
  */
-nt::color NTGraphicObject::color() const
+unsigned char NTGraphicObject::colorPair() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	return _color;
-}
-
-/*!	\brief		Set background color
- *	\param		bgColor	New background color value
- */
-void NTGraphicObject::setBgColor(nt::color bgColor)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_bgColor = bgColor;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get background color
- *	\return		Current background color value
- */
-nt::color NTGraphicObject::bgColor() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _bgColor;
+	return _colorPair;
 }
 
 /*!	\brief		Set transparency flag

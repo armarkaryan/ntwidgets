@@ -12,10 +12,10 @@
 /*! \brief  Mutex library */
 #include <mutex>
 
-/*! \brief  Base NT object */
-#include "ntobject.h"
 /*!	\brief	Base NT types */
 #include "nttypes.h"
+/*! \brief  Base NT object */
+#include "ntobject.h"
 
 class NTGraphicObject : public NTObject {
 public:
@@ -30,14 +30,15 @@ public:
 	 *	\param		name		Graphic Object name
 	 *	\param		x			Initial X position
 	 *	\param		y			Initial Y position
-	 *	\param		color		Initial text color
-	 *	\param		bgColor		Initial background color
+	 *	\param		colorPair	Color pair to draw from the palette
+	 *	\param		attr		Attr of Graphic Object
 	 *	\param		transparent	Initial transparency flag
 	 */
 	NTGraphicObject(NTObject* parent, const std::string& name,
-				   int x, int y,
-				   nt::color color, nt::color bgColor,
-				   bool transparent);
+					int x, int y,
+					unsigned char colorPair,
+					int attr,
+					bool transparent);
 
 /*!	\brief		Copy constructor
  *	\param		other	Reference to source NTLabel object
@@ -78,25 +79,15 @@ NTGraphicObject& operator=(const NTGraphicObject& other);
 	 */
 	void setPosition(int x, int y);
 
-	/*! \brief      Sets the text color
-	 *  \param      color   New text color value
+	/*! \brief      Sets the color pair
+	 *  \param      color   New color pair value
 	 */
-	void setColor(nt::color color);
+	void setColorPair(unsigned char colorPair);
 
-	/*! \brief      Gets the text color
-	 *  \return     Current text color value
+	/*! \brief      Gets the color pair
+	 *  \return     Current color pair value
 	 */
-	nt::color color() const;
-
-	/*! \brief      Sets the background color
-	 *  \param      color   New background color value
-	 */
-	void setBgColor(nt::color bgColor);
-
-	/*! \brief      Gets the background color
-	 *  \return     Current background color value
-	 */
-	nt::color bgColor() const;
+	unsigned char colorPair() const;
 
 	/*! \brief      Sets the transparency flag
 	 *  \param      transparent New transparency value
@@ -120,8 +111,8 @@ protected:
 	mutable std::mutex _mutex;	/*!< Thread-safe mutex */
 	unsigned short _x;			/*!< X coordinate */
 	unsigned short _y;			/*!< Y coordinate */
-	nt::color _color;			/*!< Text Color */
-	nt::color _bgColor;			/*!< Background Color */
+	unsigned char _colorPair;	/*!< Color pair to draw from the palette */
+	int _attr;					/*!< */
 	bool _transparent;			/*!< Transparency flag */
 	bool _changed;				/*!< Changed flag */
 };

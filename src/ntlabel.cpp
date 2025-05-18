@@ -15,8 +15,10 @@
 NTLabel::NTLabel(NTObject* parent, const std::string& name)
 	: NTGraphicObject(parent, name,
 	0, 0,							// x, y
-	nt::color({255, 255, 255}),		// color
-	nt::color({0, 0, 0}),			// bgColor
+	/*nt::color({255, 255, 255}),		// color
+	nt::color({0, 0, 0}),			// bgColor*/
+	0,								// Color pair to draw from the palette
+	0,								// attr
 	false),							// transparent
 	_text("")						// Empty text
 {
@@ -30,14 +32,14 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
  *	\param		text		Initial text content
  *	\param		x			Initial X position
  *	\param		y			Initial Y position
- *	\param		color		Initial text color
- *	\param		bgColor		Initial background color
+ *	\param		colorPair	Color pair to draw from the palette
+ *	\param		attr		Attr of Graphic Object
  *	\param		transparent	Initial transparency flag
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name,
 				const std::string& text, int x, int y,
-				nt::color color, nt::color bgColor, bool transparent)
-	: NTGraphicObject(parent, name, x, y, color, bgColor, transparent),  // передаём всё родителю
+				unsigned char colorPair, int attr, bool transparent)
+	: NTGraphicObject(parent, name, x, y, colorPair, attr, transparent),  // передаём всё родителю
 	_text(text)  // инициализируем только своё поле
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -54,8 +56,8 @@ NTLabel::NTLabel(const NTLabel& other)
 	_text = other._text;
 	_x = other._x;
 	_y = other._y;
-	_color = other._color;
-	_bgColor = other._bgColor;
+	_colorPair = other._colorPair;
+	_attr = other._attr;
 	_transparent = other._transparent;
 	//_changed = other._changed;
 	_changed = true;
@@ -81,8 +83,8 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 		_text = other._text;
 		_x = other._x;
 		_y = other._y;
-		_color = other._color;
-		_bgColor = other._bgColor;
+		_colorPair = other._colorPair;
+		_attr = other._attr;
 		_transparent = other._transparent;
 		//_changed = other._changed;
 		_changed = true;
@@ -141,7 +143,7 @@ int NTLabel::draw() {
 	if (visible_length <= 0) {
 		return NT_ERR_RANGE;
 	}
-
+/*
 	// Prepare colors
 	short color_id = 100;
 	short colorBg_id = 101;
@@ -162,16 +164,17 @@ int NTLabel::draw() {
 	if (init_pair(9, color_id, colorBg_id) == ERR) {
 		return ERR;
 	}
-
+*/
 	// Draw visible portion
 	int result = ERR;
 
 	// Если не прозрачный, то выводим с заданным цветом и фоном
 	if(_transparent == false){
-		attron(COLOR_PAIR(9));
+		attron(COLOR_PAIR(_colorPair) | _attr);
 		result = mvprintw(_y, _x, "%.*s", static_cast<int>(visible_length), _text.c_str());
-		attroff(COLOR_PAIR(9));
+		attroff(COLOR_PAIR(_colorPair) | _attr);
 	}else{
+		//attron(COLOR_PAIR(1));
 		// Если прозрачный, то с текущими атрибутами знакоместа
 		for(int i=0; i<static_cast<int>(visible_length); i++){
 			// Не стираем пробелами то, что было ранее в данной позиции
@@ -181,6 +184,7 @@ int NTLabel::draw() {
 				result = mvaddch(_y, _x+i, _text.at(i));
 			}
 		}
+		//attroff(COLOR_PAIR(1));
 	}
 
 	if (result == ERR) {

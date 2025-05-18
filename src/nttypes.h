@@ -1,6 +1,3 @@
-#ifndef _NTTYPES_H_
-#define _NTTYPES_H_
-
 /*!	\file		nttypes.h
  *	\brief		Header file containing basic data types for NT project
  *	\details	Contains the definitions and types.
@@ -8,6 +5,9 @@
  *	\date		09.05.2025
  *	\copyright	Arthur Markaryan
  */
+
+#ifndef _NTTYPES_H_
+#define _NTTYPES_H_
 
 /*!	\brief	Standard string library */
 #include <string>
@@ -40,6 +40,7 @@ namespace nt {
 		unsigned int width;
 		unsigned int height;
 	};
+
 
 } // namespace nt
 

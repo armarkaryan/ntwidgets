@@ -57,7 +57,7 @@ public:
 	 */
 	NTLabel(NTObject *parent, const std::string& name,
 			const std::string& text,
-			int x, int y, nt::color color, nt::color bgColor, bool transparent);
+			int x, int y, unsigned char colorPair, int attr, bool transparent);
 
 	/*! \brief  Destructor */
 	~NTLabel();
