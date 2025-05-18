@@ -28,7 +28,7 @@ NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name)
  *	\param		transparent	Initial transparency flag
  */
 NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name,
-			   int x, int y, unsigned char colorPair, int attr, bool transparent)
+			   int x, int y, unsigned char colorPair, chtype attr, bool transparent)
 	: NTObject(parent, name), _x(x), _y(y),
 	_colorPair(colorPair), _attr(attr), _transparent(transparent),
 	_changed(true) {}

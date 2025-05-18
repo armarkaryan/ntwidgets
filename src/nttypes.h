@@ -14,6 +14,9 @@
 /*! \brief  Standard vector library */
 #include <vector>
 
+/*!	\brief	ncurses library */
+#include <ncurses.h>
+
 /* Error codes */
 constexpr int NT_OK		= 0;	/*!< No error - OK */
 constexpr int NT_ERR	= -1;	/*!< General error - ERR */
@@ -40,7 +43,6 @@ namespace nt {
 		unsigned int width;
 		unsigned int height;
 	};
-
 
 } // namespace nt
 

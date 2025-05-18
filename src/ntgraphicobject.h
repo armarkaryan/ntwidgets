@@ -37,7 +37,7 @@ public:
 	NTGraphicObject(NTObject* parent, const std::string& name,
 					int x, int y,
 					unsigned char colorPair,
-					int attr,
+					chtype attr,
 					bool transparent);
 
 /*!	\brief		Copy constructor
@@ -112,7 +112,7 @@ protected:
 	unsigned short _x;			/*!< X coordinate */
 	unsigned short _y;			/*!< Y coordinate */
 	unsigned char _colorPair;	/*!< Color pair to draw from the palette */
-	int _attr;					/*!< */
+	chtype _attr;				/*!< */
 	bool _transparent;			/*!< Transparency flag */
 	bool _changed;				/*!< Changed flag */
 };

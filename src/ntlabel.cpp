@@ -38,7 +38,7 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name,
 				const std::string& text, int x, int y,
-				unsigned char colorPair, int attr, bool transparent)
+				unsigned char colorPair, chtype attr, bool transparent)
 	: NTGraphicObject(parent, name, x, y, colorPair, attr, transparent),  // передаём всё родителю
 	_text(text)  // инициализируем только своё поле
 {
