@@ -13,12 +13,10 @@
  *	\param		name	Label name (default: empty string)
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name)
-	: NTGraphicObject(parent, name,
+	: NTGraphicObject(parent, name,	// parent, name
 	0, 0,							// x, y
-	/*nt::color({255, 255, 255}),		// color
-	nt::color({0, 0, 0}),			// bgColor*/
 	0,								// Color pair to draw from the palette
-	0,								// attr
+	A_NORMAL,						// attr
 	false),							// transparent
 	_text("")						// Empty text
 {
@@ -33,7 +31,7 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
  *	\param		x			Initial X position
  *	\param		y			Initial Y position
  *	\param		colorPair	Color pair to draw from the palette
- *	\param		attr		Attr of Graphic Object
+ *	\param		attr		Attr of the text label
  *	\param		transparent	Initial transparency flag
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name,

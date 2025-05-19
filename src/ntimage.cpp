@@ -1,17 +1,25 @@
-// NTImage.cpp
+/*!	\file		ntimage.cpp
+ *	\brief		Implementation of thread-safe NTImage class
+ *	\details	Contains method implementations for text label handling in the NT system
+ *	\author		Arthur Markaryan
+ *	\date		11.05.2025
+ *	\copyright	Arthur Markaryan
+ */
 
 #include "ntimage.h"
 
-// Простой конструктор
+/*! \brief      Default constructor
+ *  \param      parent  Pointer to the parent object (default: nullptr)
+ *  \param      name    Image name (default: empty string)
+ */
 NTImage::NTImage(NTObject* parent, const std::string& name)
-	: NTObject(parent, name),
-	_image({""}),
-	_x(0), _y(0),
-	_color(nt::color({255, 255, 255})),
-	_bgColor(nt::color({0, 0, 0})),
-	_transparent(true),
-	_changed(true),
-	_width(0), _height(0)
+	: NTGraphicObject(parent, name,	// parent, name
+	0, 0,							// x, y
+	0,								// Color pair to draw from the palette
+	A_NORMAL,						// attr
+	false),							// transparent
+	_image({""}),					// image
+	_width(0), _height(0)			// width, height
 {
     // To do... image, width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -21,12 +29,12 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 // Полный конструктор
 NTImage::NTImage(NTObject *parent, const std::string& name,
 			   const std::vector<std::string>& image,	//  Может быть сделать структуру?
-			   int x, int y, nt::color color, nt::color bgColor, bool transparent)
+			   int x, int y, unsigned char colorPair, chtype attr, bool transparent)
 	: NTObject(parent, name),
 	_image(image),
 	_x(x), _y(y),
-	_color(color),
-	_bgColor(bgColor),
+	_colorPair(colorPair),
+	_attr(attr),
 	_transparent(transparent),
 	_changed(true)
 {
@@ -52,10 +60,13 @@ NTImage::NTImage(const NTImage& other)
 	notifyObservers();
 }
 
-// Деструктор
+/*! \brief  Destructor */
 NTImage::~NTImage() = default;
 
-// Оператор присваивания
+/*!	\brief		Assignment operator
+ *	\param		other	Reference to source NTImage object
+ *	\return		Reference to the assigned NTImage object
+ */
 NTImage& NTImage::operator=(const NTImage& other)
 {
 	if (this != &other) {
@@ -67,8 +78,8 @@ NTImage& NTImage::operator=(const NTImage& other)
 		_image = other._image;
 		_x = other._x;
 		_y = other._y;
-		_color = other._color;
-		_bgColor = other._bgColor;
+		_colorPair = other._colorPair;
+		_attr = other._attr;
 		_transparent = other._transparent;
 		_changed = true;	// !!!
 	}
@@ -90,104 +101,6 @@ const std::vector<std::string>& NTImage::image() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _image;
-}
-
-//
-void NTImage::setx(int x)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_x = x;
-	_changed = true;
-	notifyObservers();
-}
-
-//
-int NTImage::x() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _x;
-}
-
-//
-void NTImage::sety(int y)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_y = y;
-	_changed = true;
-	notifyObservers();
-}
-
-//
-int NTImage::y() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _y;
-}
-
-//
-void NTImage::setPosition(int x, int y)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_x = x;
-	_y = y;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Set text color
- *	\param		color	New text color value
- */
-void NTImage::setColor(nt::color color)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_color = color;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get text color
- *	\return		Current text color value
- */
-nt::color NTImage::color() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _color;
-}
-
-/*!	\brief		Set background color
- *	\param		bgColor	New background color value
- */
-void NTImage::setBgColor(nt::color bgColor)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_bgColor = bgColor;
-	_changed = true;
-	notifyObservers();
-}
-
-/*!	\brief		Get background color
- *	\return		Current background color value
- */
-nt::color NTImage::bgColor() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _bgColor;
-}
-
-//
-void NTImage::setTransparent(bool transparent)
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	_transparent = transparent;
-	_changed = true;
-	notifyObservers();
-}
-
-//
-bool NTImage::transparent() const
-{
-	std::lock_guard<std::mutex> lock(_mutex);
-	return _transparent;
 }
 
 //

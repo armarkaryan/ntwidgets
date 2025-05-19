@@ -34,7 +34,7 @@
 /*! \class      NTLabel
  *  \brief      Text label class for NT system.
  *  \details    Represents an text label object with position, color attributes and transparency support.
- *  \extends    NTObject
+ *  \extends    NTGraphicObject
  */
 class NTLabel : public NTGraphicObject
 {
@@ -51,8 +51,8 @@ public:
 	 *  \param      text		Text data of the text label
 	 *  \param      x           X coordinate of the text label
 	 *  \param      y           Y coordinate of the text abel
-	 *  \param      color		Text color for the text label
-	 *  \param      bgColor		Background color for the text label
+	 *	\param		colorPair	Color pair to draw from the palette
+	 *	\param		attr		Attr of the text label
 	 *	\param      transparent	Transparent flag for the text label
 	 */
 	NTLabel(NTObject *parent, const std::string& name,
