@@ -21,7 +21,7 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
 	_text("")						// Empty text
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Parameterized constructor
@@ -41,7 +41,7 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name,
 	_text(text)  // инициализируем только своё поле
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Copy constructor
@@ -59,7 +59,7 @@ NTLabel::NTLabel(const NTLabel& other)
 	_transparent = other._transparent;
 	//_changed = other._changed;
 	_changed = true;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Destructor
@@ -87,7 +87,7 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 		//_changed = other._changed;
 		_changed = true;
 	}
-	notifyObservers();
+	//notifyObservers();
 	return *this;
 }
 
@@ -99,7 +99,7 @@ void NTLabel::setText(const std::string& text)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_text = text;
 	_changed = true;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*! \brief      Gets the text data
@@ -120,6 +120,7 @@ std::string NTLabel::text() const
  */
 
 int NTLabel::draw() {
+	//
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	// Get terminal dimensions
@@ -141,28 +142,7 @@ int NTLabel::draw() {
 	if (visible_length <= 0) {
 		return NT_ERR_RANGE;
 	}
-/*
-	// Prepare colors
-	short color_id = 100;
-	short colorBg_id = 101;
 
-	short r_text = _color.red;
-	short g_text = _color.green;
-	short b_text = _color.blue;
-	short r_bg = _bgColor.red;
-	short g_bg = _bgColor.green;
-	short b_bg = _bgColor.blue;
-
-	// Initialize colors
-	if (init_color(color_id, r_text * 1000 / 255, g_text * 1000 / 255, b_text * 1000 / 255) == ERR ||
-		init_color(colorBg_id, r_bg * 1000 / 255, g_bg * 1000 / 255, b_bg * 1000 / 255) == ERR) {
-		return ERR;
-	}
-
-	if (init_pair(9, color_id, colorBg_id) == ERR) {
-		return ERR;
-	}
-*/
 	// Draw visible portion
 	int result = ERR;
 

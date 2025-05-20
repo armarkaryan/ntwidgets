@@ -23,41 +23,38 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 {
     // To do... image, width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
-	notifyObservers();
+	//notifyObservers();
 }
 
 // Полный конструктор
 NTImage::NTImage(NTObject *parent, const std::string& name,
 			   const std::vector<std::string>& image,	//  Может быть сделать структуру?
 			   int x, int y, unsigned char colorPair, chtype attr, bool transparent)
-	: NTObject(parent, name),
-	_image(image),
-	_x(x), _y(y),
-	_colorPair(colorPair),
-	_attr(attr),
-	_transparent(transparent),
-	_changed(true)
+	: NTGraphicObject(parent, name,	// parent, name
+	x, y,							// x, y
+	colorPair,						// Color pair to draw from the palette
+	attr,							// attr
+	transparent),					// transparent
+	_image(image)					// image
 {
     // To do... image, width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
 	//_height = image.size();
-	notifyObservers();
+	//notifyObservers();
 }
 
 // Конструктор копирования
 NTImage::NTImage(const NTImage& other)
-	: NTObject(other.parent(), other.name()),
-	_image(other._image),
-	_x(other._x),
-	_y(other._y),
-	_color(other._color),
-	_bgColor(other._bgColor),
-	_transparent(other._transparent),
-	_changed(true)
+	: NTGraphicObject(other.parent(), other.name(),	// parent, name
+	other._x, other._y,								// x, y
+	other._colorPair,								// Color pair to draw from the palette
+	other._attr,									// attr
+	other._transparent),							// transparent
+	_image(other._image)							// image
 {
     // To do... width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*! \brief  Destructor */
@@ -83,7 +80,7 @@ NTImage& NTImage::operator=(const NTImage& other)
 		_transparent = other._transparent;
 		_changed = true;	// !!!
 	}
-	notifyObservers();
+	//notifyObservers();
 	return *this;
 }
 
@@ -93,7 +90,7 @@ void NTImage::setImage(const std::vector<std::string>& image)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_image = image;
 	_changed = true;
-	notifyObservers();
+	//notifyObservers();
 }
 
 //
@@ -120,7 +117,8 @@ unsigned int NTImage::height() const
 //
 int NTImage::draw()
 {
-	//std::lock_guard<std::mutex> lock(_mutex);
+	//
+	std::lock_guard<std::mutex> lock(_mutex);
 
 	// Get terminal dimensions
 	int max_y, max_x;
@@ -131,56 +129,46 @@ int NTImage::draw()
 		return NT_ERR_RANGE;  // Position completely out of bounds
 	}
 
-	// Calculate visible portion of text
-	size_t visible_length = _width;
-	if (_x + visible_length > static_cast<size_t>(max_x)) {
-		visible_length = max_x - _x;
+	// Calculate visible portion of image
+	size_t visible_width = _width;
+	if (_x + visible_width > static_cast<size_t>(max_x)) {
+		visible_width = max_x - _x;
+	}
+
+	size_t visible_height = _height;
+	if (_y + visible_height > static_cast<size_t>(max_y)) {
+		visible_height = max_y - _y;
 	}
 
 	// If no visible characters left
-	if (visible_length <= 0) {
+	if (visible_width <= 0 || visible_height <= 0) {
 		return NT_ERR_RANGE;
-	}
-
-	// Prepare colors
-	short color_id = 102;
-	short colorBg_id = 103;
-
-	short r_text = _color.red;
-	short g_text = _color.green;
-	short b_text = _color.blue;
-	short r_bg = _bgColor.red;
-	short g_bg = _bgColor.green;
-	short b_bg = _bgColor.blue;
-
-	// Initialize colors
-	if (init_color(color_id, r_text * 1000 / 255, g_text * 1000 / 255, b_text * 1000 / 255) == ERR ||
-		init_color(colorBg_id, r_bg * 1000 / 255, g_bg * 1000 / 255, b_bg * 1000 / 255) == ERR) {
-		return ERR;
-	}
-
-	if (init_pair(2, color_id, colorBg_id) == ERR) {
-		return ERR;
 	}
 
 	// Draw visible portion
 	int result = ERR;
-attron(COLOR_PAIR(2));
-	//for (size_t y = 0; y < image().size() && (this->y() + static_cast<int>(y)) < term_height; y++) {
-	for (size_t y = 0; y < image().size() && (this->y() + static_cast<int>(y)) < 20; y++) {
-			if (this->y() + static_cast<int>(y) < 0) continue;
 
-			const std::string& line = this->image()[y];
-			//for (size_t x = 0; x < line.size() && (this->x() + static_cast<int>(x)) < term_width; x++) {
-			for (size_t x = 0; x < line.size() && (this->x() + static_cast<int>(x)) < 80; x++) {
-				if (this->x() + static_cast<int>(x) < 0) continue;
-				//mvaddch(img->y() + static_cast<int>(y), img->x() + static_cast<int>(x), line[x]);
-				if(line[x] == 'X') mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), ' ' | A_REVERSE);
-				if(line[x] == ' ') mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), ' ');
+	attron(COLOR_PAIR(_colorPair) | _attr);
+
+	for (size_t y = 0; y < _image.size() && (_y + static_cast<int>(y)) < 20; y++) {
+		if (_y + static_cast<int>(y) < 0) continue;
+			const std::string& line = _image[y];
+			for (size_t x = 0; x < line.size() && (_x + static_cast<int>(x)) < 80; x++) {
+				if (_x + static_cast<int>(x) < 0) continue;
+				//mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), line[x]);
+				if(line[x] == 'X') mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), ' ' | A_REVERSE);
+				//if(line[x] == ' ') mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), ' ');
 			}
-		}
-attroff(COLOR_PAIR(2));
+	}
+
+	attroff(COLOR_PAIR(_colorPair) | _attr);
+
+	if (result == ERR) {
+		return ERR;
+	}
+
 	refresh();
 	_changed = false;
+
 	return result;
 }

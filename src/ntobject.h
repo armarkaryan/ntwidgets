@@ -62,25 +62,25 @@ public:
 	/*!	\brief		Callback type definition for observer pattern
 	 *	\details	std::function wrapper for void() callbacks
 	 */
-	using Callback = std::function<void()>;
+//	using Callback = std::function<void()>;
 
 	/*!	\brief		Adds an observer callback
 	 *	\details	The callback will be executed when notifyObservers() is called
 	 *	\param		callback	Function to be called on notification
 	 *	\note		Marked as const to allow observation even of const objects
 	 */
-	void addObserver(Callback callback) const {
+/*	void addObserver(Callback callback) const {
 		_observers.push_back(callback);
-	}
+	}*/
 
 	/*!	\brief		Notifies all registered observers
 	 *	\details	Executes all registered callbacks in registration order
 	 */
-	void notifyObservers() {
+/*	void notifyObservers() {
 		for (auto& callback : _observers) {
 			callback();
 		}
-	}
+	}*/
 
 private:
 	NTObject *_parent;		/*!< Pointer to parent object */
@@ -89,7 +89,7 @@ private:
 	/*!	\brief		List of observer callbacks
 	 *	\details	Marked as mutable to allow modification even in const methods
 	 */
-	mutable std::vector<Callback> _observers;
+	//mutable std::vector<Callback> _observers;
 };
 
 #endif // _NTOBJECT_H_

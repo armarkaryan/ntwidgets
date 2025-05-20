@@ -60,27 +60,29 @@ int main(int argc, char* argv[])
 	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, color_pair_Time, 0, false);
 	NTLabel Label3(0, "Label3");
 
-	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 1, 1, {0, 100, 100}, {0, 0, 0}, false);
-	NTImage Image2(0, "hh_lo", digits_8x8[1].img, 10, 10, {100, 200, 100}, {0, 0, 0}, false);
+	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 4, 4, 0, 0, true);
+	NTImage Image2(0, "hh_lo", digits_8x8[0].img, 3, 3, color_pair_Time, 0, true);
 
-// Exity programm
+// Exit programm
 	//int x=0;
 
 	while(ch != ' '){
 
-		const auto now = std::chrono::system_clock::now();
-		const std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-		std::tm now_tm;
-
-		// Используем локальное время вместо GMT с фиксированным смещением
-		now_tm = *std::localtime(&now_time);
-
-		_hour = now_tm.tm_hour;
-		_min = now_tm.tm_min;
-		_sec = now_tm.tm_sec;
-
 		{
 			std::lock_guard<std::mutex> lock(localtime_mutex);
+
+			const auto now = std::chrono::system_clock::now();
+			const std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+			std::tm now_tm;
+
+			// Используем локальное время вместо GMT с фиксированным смещением
+			now_tm = *std::localtime(&now_time);
+
+			_hour = now_tm.tm_hour;
+			_min = now_tm.tm_min;
+			_sec = now_tm.tm_sec;
+		}
+
 
 			/*Label1.setx(x);
 			if(x<100)x++;else x=0;*/
@@ -102,14 +104,14 @@ int main(int argc, char* argv[])
 			if(Label1.isChanged())Label1.draw();
 			//
 			if(Image1.isChanged())Image1.draw();
-			//if(Image2.isChanged())Image2.draw();
+			if(Image2.isChanged())Image2.draw();
 
 			// Check if neet to redraw
 			if(Label2.isChanged())Label2.draw();
 
 			// Возможен Deadlock?
 			ch = getch();
-		}
+
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}

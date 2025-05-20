@@ -47,7 +47,7 @@ NTGraphicObject::NTGraphicObject(const NTGraphicObject& other)
 	_attr = other._attr;
 	_transparent = other._transparent;
 	_changed = other._changed;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Destructor
@@ -74,7 +74,7 @@ NTGraphicObject& NTGraphicObject::operator=(const NTGraphicObject& other)
 		_transparent = other._transparent;
 		_changed = other._changed;
 	}
-	notifyObservers();
+	//notifyObservers();
 	return *this;
 }
 
@@ -86,7 +86,7 @@ void NTGraphicObject::setx(int x)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_x = x;
 	_changed = true;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Get X coordinate position
@@ -106,7 +106,7 @@ void NTGraphicObject::sety(int y)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_y = y;
 	_changed = true;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Get Y coordinate position
@@ -127,7 +127,7 @@ void NTGraphicObject::setPosition(int x, int y)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_x = x;
 	_y = y;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Set text color
@@ -138,7 +138,7 @@ void NTGraphicObject::setColorPair(unsigned char colorPair)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_colorPair = colorPair;
 	_changed = true;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Get text color
@@ -158,7 +158,7 @@ void NTGraphicObject::setTransparent(bool transparent)
 	std::lock_guard<std::mutex> lock(_mutex);
 	_transparent = transparent;
 	_changed = true;
-	notifyObservers();
+	//notifyObservers();
 }
 
 /*!	\brief		Get transparency flag
