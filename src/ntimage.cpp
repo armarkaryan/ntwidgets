@@ -49,7 +49,7 @@ NTImage::NTImage(const NTImage& other)
 	other._x, other._y,								// x, y
 	other._colorPair,								// Color pair to draw from the palette
 	other._attr,									// attr
-	other._transparent),							// transparent
+	other._ntattr),									// ntattr
 	_image(other._image)							// image
 {
     // To do... width, height, chanals
@@ -77,7 +77,7 @@ NTImage& NTImage::operator=(const NTImage& other)
 		_y = other._y;
 		_colorPair = other._colorPair;
 		_attr = other._attr;
-		_transparent = other._transparent;
+		_ntattr = other._ntattr;
 		_changed = true;	// !!!
 	}
 	//notifyObservers();

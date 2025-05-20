@@ -56,12 +56,12 @@ int main(int argc, char* argv[])
 	unsigned char color_pair_Time = 1;
 	init_pair(color_pair_Time, color_time_id, color_bg_id);
 
-	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, color_pair_Time, A_BOLD, false);
-	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, color_pair_Time, 0, false);
+	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, color_pair_Time, A_BOLD, NTA_ATTR_OVERRIDE);
+	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, color_pair_Time, 0,  NTA_TRANSPARENT_SPACE);
 	NTLabel Label3(0, "Label3");
 
-	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 4, 4, 0, 0, true);
-	NTImage Image2(0, "hh_lo", digits_8x8[0].img, 3, 3, color_pair_Time, 0, true);
+	//NTImage Image1(0, "hh_hi", digits_8x8[0].img, 4, 4, 0, 0, true);
+	//NTImage Image2(0, "hh_lo", digits_8x8[0].img, 3, 3, color_pair_Time, 0, true);
 
 // Exit programm
 	//int x=0;
@@ -103,8 +103,8 @@ int main(int argc, char* argv[])
 			// Check if neet to redraw
 			if(Label1.isChanged())Label1.draw();
 			//
-			if(Image1.isChanged())Image1.draw();
-			if(Image2.isChanged())Image2.draw();
+			//if(Image1.isChanged())Image1.draw();
+			//if(Image2.isChanged())Image2.draw();
 
 			// Check if neet to redraw
 			if(Label2.isChanged())Label2.draw();

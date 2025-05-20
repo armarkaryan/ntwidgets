@@ -56,7 +56,7 @@ NTLabel::NTLabel(const NTLabel& other)
 	_y = other._y;
 	_colorPair = other._colorPair;
 	_attr = other._attr;
-	_transparent = other._transparent;
+	_ntattr = other._ntattr;
 	//_changed = other._changed;
 	_changed = true;
 	//notifyObservers();
@@ -83,7 +83,7 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 		_y = other._y;
 		_colorPair = other._colorPair;
 		_attr = other._attr;
-		_transparent = other._transparent;
+		_ntattr = other._ntattr;
 		//_changed = other._changed;
 		_changed = true;
 	}
@@ -146,23 +146,50 @@ int NTLabel::draw() {
 	// Draw visible portion
 	int result = ERR;
 
-	// Если не прозрачный, то выводим с заданным цветом и фоном
-	if(_transparent == false){
-		attron(COLOR_PAIR(_colorPair) | _attr);
-		result = mvprintw(_y, _x, "%.*s", static_cast<int>(visible_length), _text.c_str());
-		attroff(COLOR_PAIR(_colorPair) | _attr);
-	}else{
-		//attron(COLOR_PAIR(1));
-		// Если прозрачный, то с текущими атрибутами знакоместа
-		for(int i=0; i<static_cast<int>(visible_length); i++){
-			// Не стираем пробелами то, что было ранее в данной позиции
-			if(_text.at(i) == ' '){
-				continue;
-			}else{
-				result = mvaddch(_y, _x+i, _text.at(i));
-			}
+	for(int i=0; i<static_cast<int>(visible_length); i++){
+		//
+		chtype ch;
+		int color_pair;
+		int attributes;
+		move(_y, _x+i);
+
+		// Если NTA_ATTR_OVERRIDE, то выводим с заданным цветом и фоном и атрибутами,
+		if(_ntattr & NTA_ATTR_OVERRIDE){
+			attron(COLOR_PAIR(_colorPair) | _attr);
+		}else{
+			// в противном случае выводим с текущими атрибутами знакоместа
+			ch = inch();
+			color_pair = PAIR_NUMBER(ch);
+			attributes = ch & A_ATTRIBUTES;
+			attron(COLOR_PAIR(color_pair) | attributes);
 		}
-		//attroff(COLOR_PAIR(1));
+
+		// Если символ пробела прозрачный, то не печатаем его,
+		if(_ntattr & NTA_TRANSPARENT_SPACE){
+			if(_text.at(i) == ' '){
+				//continue;
+				result = addch(ch);
+			}else{
+				// иначе печатаем символ или пробел в текущей позиции
+				result = addch(_text.at(i));
+			}
+			//result = addch(_text.at(i));
+		}else{
+			result = addch(_text.at(i));
+		}
+
+		//result = addch(_text.at(i));
+
+		// Выключаем соответствующие атрибуты
+		if(_ntattr & NTA_ATTR_OVERRIDE){
+			attroff(COLOR_PAIR(_colorPair) | _attr);
+		}else{
+			// в противном случае выводим с текущими атрибутами знакоместа
+			ch = inch();	//?
+			color_pair = PAIR_NUMBER(ch);	//?
+			attributes = ch & A_ATTRIBUTES;	//?
+			attroff(COLOR_PAIR(color_pair) | attributes);
+		}
 	}
 
 	if (result == ERR) {

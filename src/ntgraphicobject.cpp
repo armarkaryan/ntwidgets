@@ -14,8 +14,7 @@
  */
 NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name)
 	: NTObject(parent, name), _x(0), _y(0),
-	_colorPair(0), _attr(0),
-	_transparent(false),
+	_colorPair(0), _attr(0), _ntattr(NTA_NONE),
 	_changed(true) {}
 
 /*!	\brief		Parameterized constructor
@@ -24,13 +23,13 @@ NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name)
  *	\param		x			Initial X position
  *	\param		y			Initial Y position
  *	\param		colorPair	Color pair to draw from the palette
- *	\param		attr		Attr of Graphic Object
- *	\param		transparent	Initial transparency flag
+ *	\param		attr		ncurses Attr of Graphic Object
+ *	\param		ntattr		nt Attr of Graphic Object
  */
 NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name,
-			   int x, int y, unsigned char colorPair, chtype attr, bool transparent)
+			   int x, int y, unsigned char colorPair, chtype attr, unsigned char ntattr)
 	: NTObject(parent, name), _x(x), _y(y),
-	_colorPair(colorPair), _attr(attr), _transparent(transparent),
+	_colorPair(colorPair), _attr(attr), _ntattr(ntattr),
 	_changed(true) {}
 
 /*!	\brief		Copy constructor
@@ -45,7 +44,7 @@ NTGraphicObject::NTGraphicObject(const NTGraphicObject& other)
 	_y = other._y;
 	_colorPair = other._colorPair;
 	_attr = other._attr;
-	_transparent = other._transparent;
+	_ntattr = other._ntattr;
 	_changed = other._changed;
 	//notifyObservers();
 }
@@ -71,7 +70,7 @@ NTGraphicObject& NTGraphicObject::operator=(const NTGraphicObject& other)
 		_y = other._y;
 		_colorPair = other._colorPair;
 		_attr = other._attr;
-		_transparent = other._transparent;
+		_ntattr = other._ntattr;
 		_changed = other._changed;
 	}
 	//notifyObservers();
@@ -150,24 +149,44 @@ unsigned char NTGraphicObject::colorPair() const
 	return _colorPair;
 }
 
-/*!	\brief		Set transparency flag
- *	\param		transparent	New transparency value
+/*! \brief      Sets the ncurses attr
+ *  \param      attr New ncurses attr value
  */
-void NTGraphicObject::setTransparent(bool transparent)
+void NTGraphicObject::setAttr(unsigned char attr)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	_transparent = transparent;
+	_attr = attr;
 	_changed = true;
 	//notifyObservers();
 }
 
-/*!	\brief		Get transparency flag
- *	\return		true if transparent, false otherwise
+/*! \brief      Gets the ncurses attr
+ *  \return     ncurses attr value
  */
-bool NTGraphicObject::transparent() const
+unsigned char NTGraphicObject::attr() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	return _transparent;
+	return _attr;
+}
+
+/*!	\brief		Set nt attr
+ *	\param		ntattr	nt attr value
+ */
+void NTGraphicObject::setNtattr(unsigned char ntattr)
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	_ntattr = ntattr;
+	_changed = true;
+	//notifyObservers();
+}
+
+/*!	\brief		Get nt attr
+ *	\return		ntattr	nt attr value
+ */
+unsigned char NTGraphicObject::ntattr() const
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _ntattr;
 }
 
 /*! \brief      Gets the Text Label changed flag

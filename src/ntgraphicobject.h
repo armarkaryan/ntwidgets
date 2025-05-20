@@ -17,6 +17,10 @@
 /*! \brief  Base NT object */
 #include "ntobject.h"
 
+#define NTA_NONE				0			/*!< No attr */
+#define NTA_ATTR_OVERRIDE		(1 << 0)	/*!< Attribute override flag */
+#define NTA_TRANSPARENT_SPACE	(1 << 1)	/*!< Space transparent flag */
+
 class NTGraphicObject : public NTObject {
 public:
 	/*!	\brief		Default constructor
@@ -38,20 +42,20 @@ public:
 					int x, int y,
 					unsigned char colorPair,
 					chtype attr,
-					bool transparent);
+					unsigned char ntattr);
 
-/*!	\brief		Copy constructor
- *	\param		other	Reference to source NTLabel object
- */
-NTGraphicObject(const NTGraphicObject& other);
+	/*!	\brief		Copy constructor
+	 *	\param		other	Reference to source NTLabel object
+	 */
+	NTGraphicObject(const NTGraphicObject& other);
 
 	virtual ~NTGraphicObject() = default;
 
-/*!	\brief		Assignment operator
- *	\param		other	Reference to source NTLabel object
- *	\return		Reference to the assigned NTLabel object
- */
-NTGraphicObject& operator=(const NTGraphicObject& other);
+	/*!	\brief		Assignment operator
+	 *	\param		other	Reference to source NTLabel object
+	 *	\return		Reference to the assigned NTLabel object
+	 */
+	NTGraphicObject& operator=(const NTGraphicObject& other);
 
 	/*! \brief      Sets the X coordinate
 	 *  \param      x   New X coordinate value
@@ -89,17 +93,27 @@ NTGraphicObject& operator=(const NTGraphicObject& other);
 	 */
 	unsigned char colorPair() const;
 
-	/*! \brief      Sets the transparency flag
-	 *  \param      transparent New transparency value
+	/*! \brief      Sets the ncurses attr
+	 *  \param      attr New ncurses attr value
 	 */
-	void setTransparent(bool transparent);
+	void setAttr(unsigned char attr);
 
-	/*! \brief      Gets the image transparency flag
-	 *  \return     true if transparent false otherwise
+	/*! \brief      Gets the ncurses attr
+	 *  \return     ncurses attr value
 	 */
-	bool transparent() const;
+	unsigned char attr() const;
 
-	/*! \brief      Gets the Text Label changed flag
+	/*! \brief      Sets the nt attr
+	 *  \param      attr New nt attr value
+	 */
+	void setNtattr(unsigned char attr);
+
+	/*! \brief      Gets the nt attr
+	 *  \return     nt attr value
+	 */
+	unsigned char ntattr() const;
+
+	/*! \brief      Gets the Graphic changed flag
 	 *  \return     true if changed false otherwise
 	 */
 	bool isChanged() const;
@@ -112,8 +126,8 @@ protected:
 	unsigned short _x;			/*!< X coordinate */
 	unsigned short _y;			/*!< Y coordinate */
 	unsigned char _colorPair;	/*!< Color pair to draw from the palette */
-	chtype _attr;				/*!< */
-	bool _transparent;			/*!< Transparency flag */
+	chtype _attr;				/*!< ncurses attr*/
+	unsigned char _ntattr;		/*!< nt attr*/
 	bool _changed;				/*!< Changed flag */
 };
 #endif // _NTGRAPHICOBJECT_H_
