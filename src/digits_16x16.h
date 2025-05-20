@@ -106,15 +106,27 @@ const struct nt::Image digit_16x16_3 = {
 };
 
 // Digit "4"
-const std::vector<std::string> digit_16x16_4 = {
-    " X    X ",
-    " X    X ",
-    " X    X ",
-    " XXXXXX ",
-    "      X ",
-    "      X ",
-    "      X ",
-    "      X "
+const struct nt::Image digit_16x16_4 = {
+	{	// img
+		"                ",
+		"           X    ",
+		"   X       X    ",
+		"   X       X    ",
+		"   X      X     ",
+		"    X     X     ",
+		"    X     X     ",
+		"    X     X     ",
+		"     XXXXXX     ",
+		"          X     ",
+		"          X     ",
+		"          X     ",
+		"          X     ",
+		"          X     ",
+		"           X    ",
+		"                "
+	},
+	16,	// width
+	16	// height
 };
 
 // Digit "5"
@@ -182,8 +194,8 @@ const std::vector<nt::Image> digits_16x16 = {
 	digit_16x16_0,
 	digit_16x16_1,
 	digit_16x16_2,
-	digit_16x16_3/*,
-	digit_16x16_4,
+	digit_16x16_3,
+	digit_16x16_4/*,
 	digit_16x16_5,
 	digit_16x16_6,
 	digit_16x16_7,
