@@ -1,6 +1,6 @@
 /*! \file       digits_8x8.h
  *  \brief      8x8 Images of "0" to "9" digits (header file).
- *  \details    Contains the images of digits from "0" to "9" 16x16 size. Useing in the NT system.
+ *  \details    Contains the images of digits from "0" to "9" 8x8 size. Useing in the NT system.
  *  \author     Arthur Markaryan
  *  \date       13.04.2025
  *  \copyright  Arthur Markaryan
