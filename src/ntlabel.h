@@ -53,11 +53,11 @@ public:
 	 *  \param      y           Y coordinate of the text abel
 	 *	\param		colorPair	Color pair to draw from the palette
 	 *	\param		attr		Attr of the text label
-	 *	\param      transparent	Transparent flag for the text label
+	 *	\param      ntattr		nt attr for the text label
 	 */
 	NTLabel(NTObject *parent, const std::string& name,
 			const std::string& text,
-			int x, int y, unsigned char colorPair, chtype attr, bool transparent);
+			int x, int y, unsigned char colorPair, chtype attr, unsigned char ntattr);
 
 	/*! \brief  Destructor */
 	~NTLabel();

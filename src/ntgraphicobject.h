@@ -18,8 +18,9 @@
 #include "ntobject.h"
 
 #define NTA_NONE				0			/*!< No attr */
-#define NTA_ATTR_OVERRIDE		(1 << 0)	/*!< Attribute override flag */
-#define NTA_TRANSPARENT_SPACE	(1 << 1)	/*!< Space transparent flag */
+#define NTA_TEXT_ATTR			(1 << 0)	/*!< Text attribute override flag */
+#define NTA_SPACE_ATTR			(1 << 1)	/*!< Space attribute override flag */
+#define NTA_SPACE_TRANSPARENT	(1 << 2)	/*!< Space transparent flag */
 
 class NTGraphicObject : public NTObject {
 public:
@@ -36,7 +37,7 @@ public:
 	 *	\param		y			Initial Y position
 	 *	\param		colorPair	Color pair to draw from the palette
 	 *	\param		attr		Attr of Graphic Object
-	 *	\param		transparent	Initial transparency flag
+	 *	\param		ntattr		nt attr of Graphic Object
 	 */
 	NTGraphicObject(NTObject* parent, const std::string& name,
 					int x, int y,

@@ -40,13 +40,21 @@ int main(int argc, char* argv[])
 	}
 
 	start_color();
+	printw("0________________________________\n");
+	printw("1________________________________\n");
+	printw("2________________________________\n");
+	printw("3________________________________\n");
+	printw("4________________________________\n");
+	printw("5________________________________\n");
+	printw("6________________________________\n");
+	printw("7________________________________\n");
 	printw("Color pair max count: %d\n", COLOR_PAIRS);
 	use_default_colors();
 
 // User render
 	// Colors
 	unsigned char color_time_id = 0;
-	nt::color color_Time = nt::color({255, 0, 255});
+	nt::color color_Time = nt::color({255, 0, 0});
 	init_color(color_time_id, color_Time.red * 1000 / 255, color_Time.green * 1000 / 255, color_Time.blue * 1000 / 255);
 
 	unsigned char color_bg_id = 1;
@@ -56,9 +64,26 @@ int main(int argc, char* argv[])
 	unsigned char color_pair_Time = 1;
 	init_pair(color_pair_Time, color_time_id, color_bg_id);
 
-	NTLabel Label1(0, "Label1", "Hello World!", 15, 5, color_pair_Time, A_BOLD, NTA_ATTR_OVERRIDE);
-	NTLabel Label2(0, "Label2", "Hello World!", 10, 0, color_pair_Time, 0,  NTA_TRANSPARENT_SPACE);
-	NTLabel Label3(0, "Label3");
+	NTLabel Label_Time(0, "Label_Time", "Hello World!", 15, 12, color_pair_Time, A_BOLD, NTA_NONE);
+
+	NTLabel Label0(0, "Label0", "Hello World!", 10, 0, color_pair_Time, 0,
+		NTA_NONE);
+	NTLabel Label1(0, "Label1", "Hello World!", 10, 1, color_pair_Time, 0,
+		NTA_SPACE_TRANSPARENT);
+	NTLabel Label2(0, "Label2", "Hello World!", 10, 2, color_pair_Time, 0,
+		NTA_SPACE_ATTR);
+	NTLabel Label3(0, "Label3", "Hello World!", 10, 3, color_pair_Time, 0,
+		NTA_SPACE_ATTR | NTA_SPACE_TRANSPARENT);
+	NTLabel Label4(0, "Label4", "Hello World!", 10, 4, color_pair_Time, 0,
+		NTA_TEXT_ATTR);
+	NTLabel Label5(0, "Label5", "Hello World!", 10, 5, color_pair_Time, 0,
+		NTA_TEXT_ATTR | NTA_SPACE_TRANSPARENT);
+	NTLabel Label6(0, "Label6", "Hello World!", 10, 6, color_pair_Time, 0,
+		NTA_TEXT_ATTR | NTA_SPACE_ATTR);
+	NTLabel Label7(0, "Label7", "Hello World!", 10, 7, color_pair_Time, 0,
+		NTA_TEXT_ATTR | NTA_SPACE_ATTR | NTA_SPACE_TRANSPARENT);
+
+	NTLabel Label_Hello(0, "Label_Hello");
 
 	//NTImage Image1(0, "hh_hi", digits_8x8[0].img, 4, 4, 0, 0, true);
 	//NTImage Image2(0, "hh_lo", digits_8x8[0].img, 3, 3, color_pair_Time, 0, true);
@@ -92,22 +117,30 @@ int main(int argc, char* argv[])
 				<< std::setw(2) << std::setfill('0') << _min << ":"
 				<< std::setw(2) << std::setfill('0') << _sec;
 			std::string timeString = oss.str();
-			Label1.setText(timeString);
+			Label_Time.setText(timeString);
 
 			//oss.clear();
 			//oss << Image1.image().size();
 			//std::string temp = oss.str();
-			std::string temp = "2  0";
-			Label2.setText(temp);
+			//std::string temp = "2  0";
+			//Label2.setText(temp);
 
 			// Check if neet to redraw
-			if(Label1.isChanged())Label1.draw();
+			if(Label_Hello.isChanged())Label_Hello.draw();
 			//
 			//if(Image1.isChanged())Image1.draw();
 			//if(Image2.isChanged())Image2.draw();
 
-			// Check if neet to redraw
+			if(Label0.isChanged())Label0.draw();
+			if(Label1.isChanged())Label1.draw();
 			if(Label2.isChanged())Label2.draw();
+			if(Label3.isChanged())Label3.draw();
+			if(Label4.isChanged())Label4.draw();
+			if(Label5.isChanged())Label5.draw();
+			if(Label6.isChanged())Label6.draw();
+			if(Label7.isChanged())Label7.draw();
+
+			if(Label_Time.isChanged())Label_Time.draw();
 
 			// Возможен Deadlock?
 			ch = getch();

@@ -65,7 +65,6 @@ NTGraphicObject& NTGraphicObject::operator=(const NTGraphicObject& other)
 		std::lock(lock1, lock2);
 
 		NTObject::operator=(other);
-		//_text = other._text;
 		_x = other._x;
 		_y = other._y;
 		_colorPair = other._colorPair;

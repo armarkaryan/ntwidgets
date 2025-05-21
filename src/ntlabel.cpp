@@ -36,8 +36,8 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name,
 				const std::string& text, int x, int y,
-				unsigned char colorPair, chtype attr, bool transparent)
-	: NTGraphicObject(parent, name, x, y, colorPair, attr, transparent),  // передаём всё родителю
+				unsigned char colorPair, chtype attr, unsigned char ntattr)
+	: NTGraphicObject(parent, name, x, y, colorPair, attr, ntattr),  // передаём всё родителю
 	_text(text)  // инициализируем только своё поле
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -147,49 +147,48 @@ int NTLabel::draw() {
 	int result = ERR;
 
 	for(int i=0; i<static_cast<int>(visible_length); i++){
+		// Перемещаем курсор в позицию x, y и считываем атрибуты
+		result = move(_y, _x+i);
 		//
-		chtype ch;
-		int color_pair;
-		int attributes;
-		move(_y, _x+i);
+		chtype ch = inch();					//
+		int color_pair = PAIR_NUMBER(ch);	//
+		int attributes = ch & A_ATTRIBUTES;	//
 
-		// Если NTA_ATTR_OVERRIDE, то выводим с заданным цветом и фоном и атрибутами,
-		if(_ntattr & NTA_ATTR_OVERRIDE){
-			attron(COLOR_PAIR(_colorPair) | _attr);
-		}else{
-			// в противном случае выводим с текущими атрибутами знакоместа
-			ch = inch();
-			color_pair = PAIR_NUMBER(ch);
-			attributes = ch & A_ATTRIBUTES;
-			attron(COLOR_PAIR(color_pair) | attributes);
-		}
-
-		// Если символ пробела прозрачный, то не печатаем его,
-		if(_ntattr & NTA_TRANSPARENT_SPACE){
-			if(_text.at(i) == ' '){
-				//continue;
-				result = addch(ch);
-			}else{
-				// иначе печатаем символ или пробел в текущей позиции
-				result = addch(_text.at(i));
+		// Если атрибуты для текста
+		if( _ntattr & NTA_TEXT_ATTR ){
+			if(_text.at(i) != ' '){
+				color_pair = _colorPair;
+				attributes = _attr;
 			}
-			//result = addch(_text.at(i));
-		}else{
-			result = addch(_text.at(i));
 		}
 
-		//result = addch(_text.at(i));
-
-		// Выключаем соответствующие атрибуты
-		if(_ntattr & NTA_ATTR_OVERRIDE){
-			attroff(COLOR_PAIR(_colorPair) | _attr);
-		}else{
-			// в противном случае выводим с текущими атрибутами знакоместа
-			ch = inch();	//?
-			color_pair = PAIR_NUMBER(ch);	//?
-			attributes = ch & A_ATTRIBUTES;	//?
-			attroff(COLOR_PAIR(color_pair) | attributes);
+		// Если атрибуты для пробела
+		if( _ntattr & NTA_SPACE_ATTR ){
+			if(_text.at(i) == ' '){
+				color_pair = _colorPair;
+				attributes = _attr;
+			}
 		}
+
+		// // Готовим символ для вывода
+		if( _ntattr & NTA_SPACE_TRANSPARENT ){
+			if(_text.at(i) == ' '){
+				ch = inch();
+			}else{
+				ch = _text.at(i);
+			}
+		}else{
+			ch = _text.at(i);
+		}
+
+		// Устанавливаем атрибуты, цвет и фон знакоместа
+		result = attron(COLOR_PAIR(color_pair) | attributes);
+
+		// Выводим символ
+		result = addch(ch);
+
+		// Выключаем атрибуты
+		result = attroff(COLOR_PAIR(color_pair) | attributes);
 	}
 
 	if (result == ERR) {
