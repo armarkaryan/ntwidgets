@@ -1,3 +1,11 @@
+/*! \file       digits_16x16.h
+ *  \brief      16x16 Images of "0" to "9" digits (header file).
+ *  \details    Contains the images of digits from "0" to "9" 16x16 size. Useing in the NT system.
+ *  \author     Arthur Markaryan
+ *  \date       20.04.2025
+ *  \copyright  Arthur Markaryan
+ */
+
 #ifndef _DIGITS_16X16_H_
 #define _DIGITS_16X16_H_
 
