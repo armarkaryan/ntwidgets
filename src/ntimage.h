@@ -53,11 +53,11 @@ public:
 	 *  \param      y           Y coordinate of the image
 	 *	\param		colorPair	Color pair to draw from the palette
 	 *	\param		attr		Attr for the image
-	 *	\param      transparent	Transparent flag for the image
+	 *	\param      ntattr		nt attr for the image
 	 */
 	NTImage(NTObject *parent, const std::string& name,
 			const std::vector<std::string>& image,
-			int x, int y, unsigned char colorPair, chtype attr, bool transparent);
+			int x, int y, unsigned char colorPair, chtype attr, unsigned char ntattr);
 
 	/*! \brief  Destructor */
 	~NTImage();
@@ -103,7 +103,7 @@ public:
 	 */
 	unsigned int height() const;
 
-	/*! \brief     Draw the text label
+	/*! \brief     Draw the image
 	 *  \return    OK if success,
 	 *            ERR_RANGE if out of terminal bounds,
 	 *            ERR if other error occurred

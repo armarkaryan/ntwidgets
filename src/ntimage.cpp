@@ -17,7 +17,7 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 	0, 0,							// x, y
 	0,								// Color pair to draw from the palette
 	A_NORMAL,						// attr
-	false),							// transparent
+	NTA_NONE),						// nattr
 	_image({""}),					// image
 	_width(0), _height(0)			// width, height
 {
@@ -29,12 +29,12 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 // Полный конструктор
 NTImage::NTImage(NTObject *parent, const std::string& name,
 			   const std::vector<std::string>& image,	//  Может быть сделать структуру?
-			   int x, int y, unsigned char colorPair, chtype attr, bool transparent)
+			   int x, int y, unsigned char colorPair, chtype attr, unsigned char ntattr)
 	: NTGraphicObject(parent, name,	// parent, name
 	x, y,							// x, y
 	colorPair,						// Color pair to draw from the palette
 	attr,							// attr
-	transparent),					// transparent
+	ntattr),						// ntattr
 	_image(image)					// image
 {
     // To do... image, width, height, chanals
@@ -155,8 +155,8 @@ int NTImage::draw()
 			const std::string& line = _image[y];
 			for (size_t x = 0; x < line.size() && (_x + static_cast<int>(x)) < 80; x++) {
 				if (_x + static_cast<int>(x) < 0) continue;
-				//mvaddch(this->y() + static_cast<int>(y), this->x() + static_cast<int>(x), line[x]);
-				if(line[x] == 'X') mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), ' ' | A_REVERSE);
+				mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), line[x]);
+				//if(line[x] == 'X') mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), ' ' | A_REVERSE);
 				//if(line[x] == ' ') mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), ' ');
 			}
 	}
