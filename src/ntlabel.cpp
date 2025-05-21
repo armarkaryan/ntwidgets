@@ -17,7 +17,7 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
 	0, 0,							// x, y
 	0,								// Color pair to draw from the palette
 	A_NORMAL,						// attr
-	false),							// transparent
+	NTA_NONE),						// nattr
 	_text("")						// Empty text
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -48,17 +48,15 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name,
  *	\param		other	Reference to source NTLabel object
  */
 NTLabel::NTLabel(const NTLabel& other)
+	: NTGraphicObject(other.parent(), other.name(),	// parent, name
+	other._x, other._y,								// x, y
+	other._colorPair,								// Color pair to draw from the palette
+	other._attr,									// attr
+	other._ntattr),									// ntattr
+	_text(other._text)								// image
 {
-	std::lock_guard<std::mutex> lock(other._mutex);
-	NTObject::operator=(other);
-	_text = other._text;
-	_x = other._x;
-	_y = other._y;
-	_colorPair = other._colorPair;
-	_attr = other._attr;
-	_ntattr = other._ntattr;
-	//_changed = other._changed;
-	_changed = true;
+	// To do... width, height, chanals
+	std::lock_guard<std::mutex> lock(_mutex);
 	//notifyObservers();
 }
 
@@ -197,6 +195,6 @@ int NTLabel::draw() {
 
 	refresh();
 	_changed = false;
-	return OK;
+	return result;
 }
 
