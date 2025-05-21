@@ -32,7 +32,7 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
  *	\param		y			Initial Y position
  *	\param		colorPair	Color pair to draw from the palette
  *	\param		attr		Attr of the text label
- *	\param		transparent	Initial transparency flag
+ *	\param      ntattr		nt attr for the text label
  */
 NTLabel::NTLabel(NTObject* parent, const std::string& name,
 				const std::string& text, int x, int y,
