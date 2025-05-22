@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	printw("4________________________________\n");
 	printw("5________________________________\n");
 	printw("6________________________________\n");
-	printw("7________________________________\n");
+	printw("7______________________________________________________________________________________\n");
 	printw("Color pair max count: %d\n", COLOR_PAIRS);
 	use_default_colors();
 
@@ -64,7 +64,18 @@ int main(int argc, char* argv[])
 	unsigned char color_pair_Time = 1;
 	init_pair(color_pair_Time, color_time_id, color_bg_id);
 
-	NTLabel Label_Time(0, "Label_Time", "Hello World!", 15, 10, color_pair_Time, A_BOLD, NTA_NONE);
+	unsigned char color_sun_id = 2;
+	nt::color color_Sun = nt::color({255, 255, 0});
+	init_color(color_sun_id, color_Sun.red * 1000 / 255, color_Sun.green * 1000 / 255, color_Sun.blue * 1000 / 255);
+
+	unsigned char color_sky_id = 3;
+	nt::color color_Sky = nt::color({0, 255, 255});
+	init_color(color_sky_id, color_Sky.red * 1000 / 255, color_Sky.green * 1000 / 255, color_Sky.blue * 1000 / 255);
+
+	unsigned char color_pair_Weather = 2;
+	init_pair(color_pair_Weather, color_sun_id, color_sky_id);
+
+	NTLabel Label_Time(0, "Label_Time", "Hello World!", 15, 10, color_pair_Weather, A_BOLD, NTA_NONE);
 
 	NTLabel Label0(0, "Label0", "Hello World!", 10, 0, color_pair_Time, 0,
 		NTA_NONE);
@@ -85,8 +96,8 @@ int main(int argc, char* argv[])
 
 	NTLabel Label_Hello(0, "Label_Hello");
 
-	NTImage Image1(0, "hh_hi", digits_8x8[0].img, 4, 4, 0, 0, NTA_NONE);
-	NTImage Image2(0, "hh_lo", digits_8x8[0].img, 3, 3, color_pair_Time, 0, NTA_NONE);
+	//NTImage Image1(0, "hh_hi", digits_8x8[0].img, 4, 4, 0, 0, NTA_NONE);
+	NTImage Image2(0, "hh_lo", digits_8x8[0].img, 3, 3, color_pair_Weather, 0, NTA_TEXT_ATTR | NTA_SPACE_TRANSPARENT);
 
 // Exit programm
 	//int x=0;
@@ -108,7 +119,6 @@ int main(int argc, char* argv[])
 			_sec = now_tm.tm_sec;
 		}
 
-
 			/*Label1.setx(x);
 			if(x<100)x++;else x=0;*/
 
@@ -127,9 +137,6 @@ int main(int argc, char* argv[])
 
 			// Check if neet to redraw
 			if(Label_Hello.isChanged())Label_Hello.draw();
-			//
-			if(Image1.isChanged())Image1.draw();
-			if(Image2.isChanged())Image2.draw();
 
 			if(Label0.isChanged())Label0.draw();
 			if(Label1.isChanged())Label1.draw();
@@ -139,6 +146,10 @@ int main(int argc, char* argv[])
 			if(Label5.isChanged())Label5.draw();
 			if(Label6.isChanged())Label6.draw();
 			if(Label7.isChanged())Label7.draw();
+
+			//
+			//if(Image1.isChanged())Image1.draw();
+			if(Image2.isChanged())Image2.draw();
 
 			if(Label_Time.isChanged())Label_Time.draw();
 
