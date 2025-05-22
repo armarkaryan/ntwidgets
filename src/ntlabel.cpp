@@ -144,9 +144,10 @@ int NTLabel::draw() {
 	// Draw visible portion
 	int result = ERR;
 
-	for(int i=0; i<static_cast<int>(visible_length); i++){
+	for(int x=0; x<static_cast<int>(visible_length) /*&& _x + static_cast<int>(x) < static_cast<int>(visible_length)*/; x++){
+		//if (_x + static_cast<int>(x) < 0) continue;
 		// Перемещаем курсор в позицию x, y и считываем атрибуты
-		result = move(_y, _x+i);
+		result = move(_y, _x + static_cast<int>(x));
 		//
 		chtype ch = inch();					//
 		int color_pair = PAIR_NUMBER(ch);	//
@@ -154,7 +155,7 @@ int NTLabel::draw() {
 
 		// Если атрибуты для текста
 		if( _ntattr & NTA_TEXT_ATTR ){
-			if(_text.at(i) != ' '){
+			if(_text.at(x) != ' '){
 				color_pair = _colorPair;
 				attributes = _attr;
 			}
@@ -162,7 +163,7 @@ int NTLabel::draw() {
 
 		// Если атрибуты для пробела
 		if( _ntattr & NTA_SPACE_ATTR ){
-			if(_text.at(i) == ' '){
+			if(_text.at(x) == ' '){
 				color_pair = _colorPair;
 				attributes = _attr;
 			}
@@ -170,13 +171,13 @@ int NTLabel::draw() {
 
 		// // Готовим символ для вывода
 		if( _ntattr & NTA_SPACE_TRANSPARENT ){
-			if(_text.at(i) == ' '){
+			if(_text.at(x) == ' '){
 				ch = inch();
 			}else{
-				ch = _text.at(i);
+				ch = _text.at(x);
 			}
 		}else{
-			ch = _text.at(i);
+			ch = _text.at(x);
 		}
 
 		// Устанавливаем атрибуты, цвет и фон знакоместа

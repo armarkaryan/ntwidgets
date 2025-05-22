@@ -148,20 +148,57 @@ int NTImage::draw()
 	// Draw visible portion
 	int result = ERR;
 
-	attron(COLOR_PAIR(_colorPair) | _attr);
+	//for (size_t y = 0; y < _image.size() && (_y + static_cast<int>(y)) < static_cast<int>(visible_height); y++) {
+	for (size_t y = 0; y < _image.size(); y++) {
+		//if (_y + static_cast<int>(y) < 0) continue;
+		const std::string& line = _image[y];
+		//for (size_t x = 0; x < line.size() && (_x + static_cast<int>(x)) < static_cast<int>(visible_width); x++) {
+		for (size_t x = 0; x < line.size(); x++) {
+			//if (_x + static_cast<int>(x) < 0) continue;
+			// Перемещаем курсор в позицию y, x и считываем атрибуты
+			result = move(_y + static_cast<int>(y), _x + static_cast<int>(x));
+			//
+			chtype ch = inch();					//
+			int color_pair = PAIR_NUMBER(ch);	//
+			int attributes = ch & A_ATTRIBUTES;	//
 
-	for (size_t y = 0; y < _image.size() && (_y + static_cast<int>(y)) < 20; y++) {
-		if (_y + static_cast<int>(y) < 0) continue;
-			const std::string& line = _image[y];
-			for (size_t x = 0; x < line.size() && (_x + static_cast<int>(x)) < 80; x++) {
-				if (_x + static_cast<int>(x) < 0) continue;
-				mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), line[x]);
-				//if(line[x] == 'X') mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), ' ' | A_REVERSE);
-				//if(line[x] == ' ') mvaddch(_y + static_cast<int>(y), _x + static_cast<int>(x), ' ');
+			// Если атрибуты для текста
+			if( _ntattr & NTA_TEXT_ATTR ){
+				if(line.at(x) != ' '){
+					color_pair = _colorPair;
+					attributes = _attr;
+				}
 			}
-	}
 
-	attroff(COLOR_PAIR(_colorPair) | _attr);
+			// Если атрибуты для пробела
+			if( _ntattr & NTA_SPACE_ATTR ){
+				if(line.at(x) == ' '){
+					color_pair = _colorPair;
+					attributes = _attr;
+				}
+			}
+
+			// // Готовим символ для вывода
+			if( _ntattr & NTA_SPACE_TRANSPARENT ){
+				if(line.at(x) == ' '){
+					ch = inch();
+				}else{
+					ch = line.at(x);
+				}
+			}else{
+				ch = line.at(x);
+			}
+
+			// Устанавливаем атрибуты, цвет и фон знакоместа
+			result = attron(COLOR_PAIR(color_pair) | attributes);
+
+			// Выводим символ
+			result = addch(ch);
+
+			// Выключаем атрибуты
+			result = attroff(COLOR_PAIR(color_pair) | attributes);
+		}
+	}
 
 	if (result == ERR) {
 		return ERR;
@@ -169,6 +206,5 @@ int NTImage::draw()
 
 	refresh();
 	_changed = false;
-
 	return result;
 }
