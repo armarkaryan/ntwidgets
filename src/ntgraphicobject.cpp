@@ -151,7 +151,7 @@ unsigned char NTGraphicObject::colorPair() const
 /*! \brief      Sets the ncurses attr
  *  \param      attr New ncurses attr value
  */
-void NTGraphicObject::setAttr(unsigned char attr)
+void NTGraphicObject::setAttr(chtype attr)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	_attr = attr;
@@ -162,7 +162,7 @@ void NTGraphicObject::setAttr(unsigned char attr)
 /*! \brief      Gets the ncurses attr
  *  \return     ncurses attr value
  */
-unsigned char NTGraphicObject::attr() const
+chtype NTGraphicObject::attr() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _attr;

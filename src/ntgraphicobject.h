@@ -97,12 +97,12 @@ public:
 	/*! \brief      Sets the ncurses attr
 	 *  \param      attr New ncurses attr value
 	 */
-	void setAttr(unsigned char attr);
+	void setAttr(chtype attr);
 
 	/*! \brief      Gets the ncurses attr
 	 *  \return     ncurses attr value
 	 */
-	unsigned char attr() const;
+	chtype attr() const;
 
 	/*! \brief      Sets the nt attr
 	 *  \param      attr New nt attr value
