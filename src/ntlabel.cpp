@@ -141,7 +141,7 @@ int NTLabel::draw() {
 	// Position (Y, X) completely out of bounds
 	if(NT_OK != result) return result;
 
-	//
+	// Get the start character and length
 	int visible_start = 0;
 	int visible_length = 0;
 
@@ -165,14 +165,15 @@ int NTLabel::draw() {
 
 	// Draw visible portion
 	for(int x=visible_start; x<static_cast<int>(visible_length); x++){
-		// Перемещаем курсор в позицию x, y и считываем атрибуты
+		// Move cursor to the x, y - position to get the attrs
 		result = move(_y, _x + static_cast<int>(x));
-		//
-		chtype ch = inch();					//
-		int color_pair = PAIR_NUMBER(ch);	//
-		int attributes = ch & A_ATTRIBUTES;	//
 
-		// Если атрибуты для текста
+		// Get the attrs in the current cursor position
+		chtype ch = inch();					// Get character and attrs
+		int color_pair = PAIR_NUMBER(ch);	// Get color pair
+		int attributes = ch & A_ATTRIBUTES;	// Get attr
+
+		// If attrs for the text then...
 		if( _ntattr & NTA_TEXT_ATTR ){
 			if(_text.at(x) != ' '){
 				color_pair = _colorPair;
@@ -180,7 +181,7 @@ int NTLabel::draw() {
 			}
 		}
 
-		// Если атрибуты для пробела
+		// If attr for the space then...
 		if( _ntattr & NTA_SPACE_ATTR ){
 			if(_text.at(x) == ' '){
 				color_pair = _colorPair;
@@ -188,7 +189,7 @@ int NTLabel::draw() {
 			}
 		}
 
-		// // Готовим символ для вывода
+		// Prepare character to print in terminal
 		if( _ntattr & NTA_SPACE_TRANSPARENT ){
 			if(_text.at(x) == ' '){
 				ch = inch();
@@ -199,20 +200,22 @@ int NTLabel::draw() {
 			ch = _text.at(x);
 		}
 
-		// Устанавливаем атрибуты, цвет и фон знакоместа
+		// Set the attrs, color, background color
 		result = attron(COLOR_PAIR(color_pair) | attributes);
 
-		// Выводим символ
+		// Print character
 		result = addch(ch);
 
-		// Выключаем атрибуты
+		// Unset attrs
 		result = attroff(COLOR_PAIR(color_pair) | attributes);
 	}
 
+	// If any fatal error occured then return ERR
 	if (result == ERR) {
 		return ERR;
 	}
 
+	// No fatal error occured
 	refresh();
 	_changed = false;
 	return result;
