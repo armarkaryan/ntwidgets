@@ -124,8 +124,8 @@ public:
 
 protected:
 	mutable std::mutex _mutex;	/*!< Thread-safe mutex */
-	unsigned short _x;			/*!< X coordinate */
-	unsigned short _y;			/*!< Y coordinate */
+	int _x;						/*!< X coordinate */
+	int _y;						/*!< Y coordinate */
 	unsigned char _colorPair;	/*!< Color pair to draw from the palette */
 	chtype _attr;				/*!< ncurses attr*/
 	unsigned char _ntattr;		/*!< nt attr*/
