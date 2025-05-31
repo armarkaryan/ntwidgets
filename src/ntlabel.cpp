@@ -121,31 +121,50 @@ int NTLabel::draw() {
 	//
 	std::lock_guard<std::mutex> lock(_mutex);
 
+	//
+	int result = NT_OK;
+
 	// Get terminal dimensions
 	int max_y, max_x;
 	getmaxyx(stdscr, max_y, max_x);
 
-	// Check if position is out of bounds
-	if (_y < 0 || _y >= max_y || _x < 0 || _x >= max_x) {
-		return NT_ERR_RANGE;  // Position completely out of bounds
+	// Check if Y-position is out of bounds or no need to draw
+	if ( _y < 0 || _y >= max_y ) {
+		result |= NT_ERR_RANGE_Y;	// Position Y completely out of bounds
 	}
 
-	// Calculate visible portion of text
-	size_t visible_length = _text.length();
-	if (_x + visible_length > static_cast<size_t>(max_x)) {
+	// Check if X-position is out of bounds or no need to draw
+	if ( _x+_text.length() < 0 || _x >= max_x) {
+		result |= NT_ERR_RANGE_X;	// Position X completely out of bounds
+	}
+
+	// Position (Y, X) completely out of bounds
+	if(NT_OK != result) return result;
+
+	//
+	int visible_start = 0;
+	int visible_length = 0;
+
+	if(_x < 0) {
+		visible_start = 0 - _x;
+	}
+
+	visible_length = _text.length();
+
+	if(visible_length + _x > max_x) {
 		visible_length = max_x - _x;
 	}
 
 	// If no visible characters left
 	if (visible_length <= 0) {
-		return NT_ERR_RANGE;
+		result |=  NT_ERR_INVISIBLE;
 	}
 
-	// Draw visible portion
-	int result = ERR;
+	// If text is invisible
+	if(NT_OK != result) return result;
 
-	for(int x=0; x<static_cast<int>(visible_length) /*&& _x + static_cast<int>(x) < static_cast<int>(visible_length)*/; x++){
-		//if (_x + static_cast<int>(x) < 0) continue;
+	// Draw visible portion
+	for(int x=visible_start; x<static_cast<int>(visible_length); x++){
 		// Перемещаем курсор в позицию x, y и считываем атрибуты
 		result = move(_y, _x + static_cast<int>(x));
 		//
