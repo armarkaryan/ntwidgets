@@ -18,9 +18,11 @@
 #include <ncurses.h>
 
 /* Error codes */
-constexpr int NT_OK		= 0;	/*!< No error - OK */
-constexpr int NT_ERR	= -1;	/*!< General error - ERR */
-constexpr int NT_ERR_RANGE = -2;	/*!< Range error - out of bounds */
+constexpr int NT_OK				= 0;		/*!< No error - OK */
+constexpr int NT_ERR			= (1 << 0);	/*!< General error - ERR */
+constexpr int NT_ERR_RANGE_Y	= (1 << 1);	/*!< Range Y error - Y-position out of bounds */
+constexpr int NT_ERR_RANGE_X	= (1 << 2);	/*!< Range X error - Y-position out of bounds */
+constexpr int NT_ERR_INVISIBLE	= (1 << 3);	/*!< Text is invisible */
 
 /*!
  *  \namespace nt
