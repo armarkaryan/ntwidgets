@@ -118,10 +118,7 @@ std::string NTLabel::text() const
  */
 
 int NTLabel::draw() {
-	//
 	std::lock_guard<std::mutex> lock(_mutex);
-
-	//
 	int result = NT_OK;
 
 	// Get terminal dimensions

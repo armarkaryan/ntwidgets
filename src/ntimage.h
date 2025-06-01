@@ -112,8 +112,8 @@ public:
 
 private:
 	std::vector<std::string> _image;	/*!< Image data storage */
-	unsigned short _width;				/*!< Image width */
-	unsigned short _height;				/*!< Image height */
+	unsigned int _width;				/*!< Image width */
+	unsigned int _height;				/*!< Image height */
 };
 
 #endif // _NTIMAGE_H_

@@ -10,8 +10,8 @@
 #include "ntimage.h"
 #include "digits_8x8.h"
 
-#include <sstream>  // для ostringstream
-#include <iomanip>  // для setw, setfill
+#include <sstream>  // for ostringstream
+#include <iomanip>  // for setw, setfill
 
 int _hour = 0;
 int _min = 0;
@@ -32,10 +32,10 @@ int main(int argc, char* argv[])
 	curs_set(0);
 	timeout(0);
 
-	// Проверка поддержки цветов
+	// Check the colors support
 	if (!has_colors()) {
 		endwin();
-		fprintf(stderr, "Терминал не поддерживает цвета\n");
+		fprintf(stderr, "Colors is not supported!\n");
 		return EXIT_FAILURE;
 	}
 
@@ -77,11 +77,11 @@ int main(int argc, char* argv[])
 
 	NTLabel Label_Time(0, "Label_Time", "Hello World!", 15, 10, color_pair_Weather, A_BOLD, NTA_NONE);
 
-	NTLabel Label0(0, "Label0", "Hello World!", 70, 0, color_pair_Time, 0,
+	NTLabel Label0(0, "Label0", "Hello World!", 10, 0, color_pair_Time, 0,
 		NTA_NONE);
-	NTLabel Label1(0, "Label1", "Hello World!", 70, 1, color_pair_Time, 0,
+	NTLabel Label1(0, "Label1", "Hello World!", 10, 1, color_pair_Time, 0,
 		NTA_SPACE_TRANSPARENT);
-	NTLabel Label2(0, "Label2", "Hello World!", 70, 2, color_pair_Time, 0,
+	NTLabel Label2(0, "Label2", "Hello World!", 10, 2, color_pair_Time, 0,
 		NTA_SPACE_ATTR);
 	NTLabel Label3(0, "Label3", "Hello World!", 10, 3, color_pair_Time, 0,
 		NTA_SPACE_ATTR | NTA_SPACE_TRANSPARENT);
