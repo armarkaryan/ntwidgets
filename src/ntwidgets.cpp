@@ -9,6 +9,7 @@
 #include "ntlabel.h"
 #include "ntimage.h"
 #include "digits_8x8.h"
+#include "digits_16x16.h"
 
 #include <sstream>  // for ostringstream
 #include <iomanip>  // for setw, setfill
@@ -16,7 +17,7 @@
 int _hour = 0;
 int _min = 0;
 int _sec = 0;
-std::mutex localtime_mutex;  // Мьютекс для синхронизации доступа к времени
+std::mutex localtime_mutex;  // Mutex for local time sinchronization
 std::atomic<int> ch;
 
 int main(int argc, char* argv[])
@@ -54,22 +55,22 @@ int main(int argc, char* argv[])
 // User render
 	// Colors
 	unsigned char color_time_id = 0;
-	nt::color color_Time = nt::color({255, 0, 0});
+	nt::Color color_Time = nt::Color({255, 0, 0});
 	init_color(color_time_id, color_Time.red * 1000 / 255, color_Time.green * 1000 / 255, color_Time.blue * 1000 / 255);
 
 	unsigned char color_bg_id = 1;
-	nt::color color_bg_Time = nt::color({0, 255, 0});
+	nt::Color color_bg_Time = nt::Color({0, 255, 0});
 	init_color(color_bg_id, color_bg_Time.red * 1000 / 255, color_bg_Time.green * 1000 / 255, color_bg_Time.blue * 1000 / 255);
 
 	unsigned char color_pair_Time = 1;
 	init_pair(color_pair_Time, color_time_id, color_bg_id);
 
 	unsigned char color_sun_id = 2;
-	nt::color color_Sun = nt::color({255, 255, 0});
+	nt::Color color_Sun = nt::Color({255, 255, 0});
 	init_color(color_sun_id, color_Sun.red * 1000 / 255, color_Sun.green * 1000 / 255, color_Sun.blue * 1000 / 255);
 
 	unsigned char color_sky_id = 3;
-	nt::color color_Sky = nt::color({0, 255, 255});
+	nt::Color color_Sky = nt::Color({0, 255, 255});
 	init_color(color_sky_id, color_Sky.red * 1000 / 255, color_Sky.green * 1000 / 255, color_Sky.blue * 1000 / 255);
 
 	unsigned char color_pair_Weather = 2;
@@ -96,11 +97,10 @@ int main(int argc, char* argv[])
 
 	NTLabel Label_Hello(0, "Label_Hello");
 
-	//NTImage Image1(0, "hh_hi", digits_8x8[0].img, 4, 4, 0, 0, NTA_NONE);
-	NTImage Image2(0, "hh_lo", digits_8x8[0].img, 3, 3, color_pair_Weather, 0, NTA_TEXT_ATTR | NTA_SPACE_TRANSPARENT);
+	NTImage Image1(0, "hh_hi", digits_8x8[0], 4, 4, 0, 0, NTA_TEXT_ATTR | NTA_SPACE_TRANSPARENT);
+	NTImage Image2(0, "hh_lo", digits_8x8[0], 3, 3, color_pair_Weather, 0, NTA_TEXT_ATTR | NTA_SPACE_TRANSPARENT);
 
 // Exit programm
-	//int x=0;
 
 	while(ch != ' '){
 
@@ -109,31 +109,20 @@ int main(int argc, char* argv[])
 
 			const auto now = std::chrono::system_clock::now();
 			const std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-			std::tm now_tm;
-
-			// Используем локальное время вместо GMT с фиксированным смещением
-			now_tm = *std::localtime(&now_time);
+			std::tm now_tm = *std::localtime(&now_time);
 
 			_hour = now_tm.tm_hour;
 			_min = now_tm.tm_min;
 			_sec = now_tm.tm_sec;
 		}
 
-			/*Label1.setx(x);
-			if(x<100)x++;else x=0;*/
-
+			// Print time
 			std::ostringstream oss;
 			oss << std::setw(2) << std::setfill('0') << _hour << ":"
 				<< std::setw(2) << std::setfill('0') << _min << ":"
 				<< std::setw(2) << std::setfill('0') << _sec;
 			std::string timeString = oss.str();
 			Label_Time.setText(timeString);
-
-			//oss.clear();
-			//oss << Image1.image().size();
-			//std::string temp = oss.str();
-			//std::string temp = "2  0";
-			//Label2.setText(temp);
 
 			// Check if neet to redraw
 			if(Label_Hello.isChanged())Label_Hello.draw();
@@ -148,12 +137,12 @@ int main(int argc, char* argv[])
 			if(Label7.isChanged())Label7.draw();
 
 			//
-			//if(Image1.isChanged())Image1.draw();
+			if(Image1.isChanged())Image1.draw();
 			if(Image2.isChanged())Image2.draw();
 
 			if(Label_Time.isChanged())Label_Time.draw();
 
-			// Возможен Deadlock?
+			// Is the Deadlock possible?
 			ch = getch();
 
 

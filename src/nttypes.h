@@ -18,11 +18,12 @@
 #include <ncurses.h>
 
 /* Error codes */
-constexpr int NT_OK				= 0;		/*!< No error - OK */
-constexpr int NT_ERR			= (1 << 0);	/*!< General error - ERR */
-constexpr int NT_ERR_RANGE_Y	= (1 << 1);	/*!< Range Y error - Y-position out of bounds */
-constexpr int NT_ERR_RANGE_X	= (1 << 2);	/*!< Range X error - Y-position out of bounds */
-constexpr int NT_ERR_INVISIBLE	= (1 << 3);	/*!< Text is invisible */
+constexpr int NT_OK					= 0;		/*!< No error - OK */
+constexpr int NT_ERR				= (1 << 0);	/*!< General error - ERR */
+constexpr int NT_ERR_RANGE_Y		= (1 << 1);	/*!< Range Y error - Y-position out of bounds */
+constexpr int NT_ERR_RANGE_X		= (1 << 2);	/*!< Range X error - Y-position out of bounds */
+constexpr int NT_ERR_INVISIBLE_Y	= (1 << 3);	/*!< Text is invisible y-coordinates */
+constexpr int NT_ERR_INVISIBLE_X	= (1 << 4);	/*!< Text is invisible x-coordinates */
 
 /*!
  *  \namespace nt
@@ -30,20 +31,23 @@ constexpr int NT_ERR_INVISIBLE	= (1 << 3);	/*!< Text is invisible */
  */
 namespace nt {
 	/*!
-	 *  \struct color
+	 *  \struct Color
 	 *  \brief    Structure representing RGB color format
 	 */
-	struct color {
+	struct Color {
 		unsigned char red;    /*!< Red color component (0-255) */
 		unsigned char green;  /*!< Green color component (0-255) */
 		unsigned char blue;   /*!< Blue color component (0-255) */
 	};
 
-	//
+	/*!
+	 *  \struct Image
+	 *  \brief    Structure representing symbol map of the image
+	 */
 	struct Image {
-		std::vector<std::string> img;
-		unsigned int width;
-		unsigned int height;
+		std::vector<std::string> img;	/*!< Symbol map of the image */
+		unsigned int width;				/*!< Image width */
+		unsigned int height;			/*!< Image height */
 	};
 
 } // namespace nt

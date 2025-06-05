@@ -8,10 +8,7 @@
 
 #include "ntlabel.h"
 
-/*!	\brief		Default constructor
- *	\param		parent	Pointer to the parent object (default: nullptr)
- *	\param		name	Label name (default: empty string)
- */
+// Default constructor
 NTLabel::NTLabel(NTObject* parent, const std::string& name)
 	: NTGraphicObject(parent, name,	// parent, name
 	0, 0,							// x, y
@@ -24,29 +21,18 @@ NTLabel::NTLabel(NTObject* parent, const std::string& name)
 	//notifyObservers();
 }
 
-/*!	\brief		Parameterized constructor
- *	\param		parent		Pointer to the parent object
- *	\param		name		Label name
- *	\param		text		Initial text content
- *	\param		x			Initial X position
- *	\param		y			Initial Y position
- *	\param		colorPair	Color pair to draw from the palette
- *	\param		attr		Attr of the text label
- *	\param      ntattr		nt attr for the text label
- */
+// Parameterized constructor
 NTLabel::NTLabel(NTObject* parent, const std::string& name,
 				const std::string& text, int x, int y,
 				unsigned char colorPair, chtype attr, unsigned char ntattr)
-	: NTGraphicObject(parent, name, x, y, colorPair, attr, ntattr),  // передаём всё родителю
-	_text(text)  // инициализируем только своё поле
+	: NTGraphicObject(parent, name, x, y, colorPair, attr, ntattr),
+	_text(text)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	//notifyObservers();
 }
 
-/*!	\brief		Copy constructor
- *	\param		other	Reference to source NTLabel object
- */
+// Copy constructor
 NTLabel::NTLabel(const NTLabel& other)
 	: NTGraphicObject(other.parent(), other.name(),	// parent, name
 	other._x, other._y,								// x, y
@@ -55,19 +41,14 @@ NTLabel::NTLabel(const NTLabel& other)
 	other._ntattr),									// ntattr
 	_text(other._text)								// image
 {
-	// To do... width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
 	//notifyObservers();
 }
 
-/*!	\brief		Destructor
- */
+// Destructor
 NTLabel::~NTLabel() = default;
 
-/*!	\brief		Assignment operator
- *	\param		other	Reference to source NTLabel object
- *	\return		Reference to the assigned NTLabel object
- */
+// Assignment operator
 NTLabel& NTLabel::operator=(const NTLabel& other)
 {
 	if (this != &other) {
@@ -82,16 +63,13 @@ NTLabel& NTLabel::operator=(const NTLabel& other)
 		_colorPair = other._colorPair;
 		_attr = other._attr;
 		_ntattr = other._ntattr;
-		//_changed = other._changed;
 		_changed = true;
 	}
 	//notifyObservers();
 	return *this;
 }
 
-/*! \brief      Sets the text data
- *  \param      text   Representing the new text data
- */
+// Sets the text data
 void NTLabel::setText(const std::string& text)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -100,23 +78,14 @@ void NTLabel::setText(const std::string& text)
 	//notifyObservers();
 }
 
-/*! \brief      Gets the text data
- *  \return     Constant reference to the text data
- */
+// Gets the text data
 std::string NTLabel::text() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _text;
 }
 
-/*!	\brief		Draw the text label
- *	\details	Thread-safe rendering of the label using ncurses library.
- *			Only visible characters within terminal bounds are drawn.
- *	\return		OK if draw success,
- *			ERR_RANGE if text is out of terminal bounds,
- *			ERR if other error occurred
- */
-
+// Draw the text label
 int NTLabel::draw() {
 	std::lock_guard<std::mutex> lock(_mutex);
 	int result = NT_OK;
@@ -139,31 +108,31 @@ int NTLabel::draw() {
 	if(NT_OK != result) return result;
 
 	// Get the start character and length
-	int visible_start = 0;
-	int visible_length = 0;
+	int visible_hstart = 0;
+	int visible_hlength = 0;
 
 	if(_x < 0) {
-		visible_start = 0 - _x;
+		visible_hstart = 0 - _x;
 	}
 
-	visible_length = _text.length();
+	visible_hlength = _text.length();
 
-	if(visible_length + _x > max_x) {
-		visible_length = max_x - _x;
+	if(visible_hlength + _x > max_x) {
+		visible_hlength = max_x - _x;
 	}
 
 	// If no visible characters left
-	if (visible_length <= 0) {
-		result |=  NT_ERR_INVISIBLE;
+	if (visible_hlength <= 0) {
+		result |=  NT_ERR_INVISIBLE_X;
 	}
 
 	// If text is invisible
 	if(NT_OK != result) return result;
 
 	// Draw visible portion
-	for(int x=visible_start; x<static_cast<int>(visible_length); x++){
+	for(int x = visible_hstart; x < visible_hlength; x++){
 		// Move cursor to the x, y - position to get the attrs
-		result = move(_y, _x + static_cast<int>(x));
+		result = move(_y, _x + x);
 
 		// Get the attrs in the current cursor position
 		chtype ch = inch();					// Get character and attrs

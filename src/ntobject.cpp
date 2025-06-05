@@ -7,10 +7,7 @@
 
 #include "ntobject.h"
 
-/*!	\brief		Constructor
- *	\param[in]	parent	Pointer to the parent object (default: nullptr)
- *	\param[in]	name	Object name (default: empty string)
- */
+// Constructor
 NTObject::NTObject(NTObject *parent, const std::string &name) :
     _parent(parent),
     _name(name)
@@ -18,43 +15,31 @@ NTObject::NTObject(NTObject *parent, const std::string &name) :
     // Initialization handled in member initializer list
 }
 
-/*!	\brief	Destructor
- *	\note	Parent-child relationships should be managed by the owner class
- */
+// Destructor
 NTObject::~NTObject()
 {
     // No dynamic resources to free
 }
 
-/*!	\brief		Sets the parent object
- *	\param[in]	parent	Pointer to the new parent object
- *	\note		Simple assignment, no reference counting or ownership management
- */
+// Sets the parent object
 void NTObject::setParent(NTObject *parent)
 {
     _parent = parent;
 }
 
-/*!	\brief		Gets the parent object
- *	\return		Pointer to the parent object or nullptr if none exists
- */
+// Gets the parent object
 NTObject *NTObject::parent() const
 {
     return _parent;
 }
 
-/*!	\brief		Sets the object name
- *	\param[in]	name	New name for the object
- */
+// Sets the object name
 void NTObject::setName(const std::string &name)
 {
     _name = name;
 }
 
-/*!	\brief		Gets the object name
- *	\return		Copy of the object's name string
- *	\note		Returns by value to maintain encapsulation
- */
+// Gets the object name
 std::string NTObject::name() const
 {
     return _name;

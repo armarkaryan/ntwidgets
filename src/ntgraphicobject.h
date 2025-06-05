@@ -22,6 +22,11 @@
 #define NTA_SPACE_ATTR			(1 << 1)	/*!< Space attribute override flag */
 #define NTA_SPACE_TRANSPARENT	(1 << 2)	/*!< Space transparent flag */
 
+/*! \class      NTGraphicObject
+ *  \brief      Graphic object class for NT system.
+ *  \details    Represents an base graphic object with position, color attributes and transparency support.
+ *  \extends    NTObject
+ */
 class NTGraphicObject : public NTObject {
 public:
 	/*!	\brief		Default constructor
@@ -50,7 +55,9 @@ public:
 	 */
 	NTGraphicObject(const NTGraphicObject& other);
 
-	virtual ~NTGraphicObject() = default;
+	/*!	\brief		Destructor
+	 */
+	virtual ~NTGraphicObject();
 
 	/*!	\brief		Assignment operator
 	 *	\param		other	Reference to source NTLabel object
@@ -119,7 +126,7 @@ public:
 	 */
 	bool isChanged() const;
 
-	// Виртуальный метод для отрисовки (должен быть переопределен)
+	// Virtual methot to draw (must be override)
 	virtual int draw() = 0;
 
 protected:

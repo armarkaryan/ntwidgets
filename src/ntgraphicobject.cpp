@@ -8,38 +8,24 @@
 
 #include "ntgraphicobject.h"
 
-/*!	\brief		Default constructor
- *	\param		parent	Pointer to the parent object (default: nullptr)
- *	\param		name	Label name (default: empty string)
- */
+// Default constructor
 NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name)
 	: NTObject(parent, name), _x(0), _y(0),
 	_colorPair(0), _attr(0), _ntattr(NTA_NONE),
 	_changed(true) {}
 
-/*!	\brief		Parameterized constructor
- *	\param		parent		Pointer to the parent object
- *	\param		name		Graphic Object name
- *	\param		x			Initial X position
- *	\param		y			Initial Y position
- *	\param		colorPair	Color pair to draw from the palette
- *	\param		attr		ncurses Attr of Graphic Object
- *	\param		ntattr		nt Attr of Graphic Object
- */
+//Parameterized constructor
 NTGraphicObject::NTGraphicObject(NTObject* parent, const std::string& name,
 			   int x, int y, unsigned char colorPair, chtype attr, unsigned char ntattr)
 	: NTObject(parent, name), _x(x), _y(y),
 	_colorPair(colorPair), _attr(attr), _ntattr(ntattr),
 	_changed(true) {}
 
-/*!	\brief		Copy constructor
- *	\param		other	Reference to source NTLabel object
- */
+// Copy constructor
 NTGraphicObject::NTGraphicObject(const NTGraphicObject& other)
 {
 	std::lock_guard<std::mutex> lock(other._mutex);
 	NTObject::operator=(other);
-	//_text = other._text;
 	_x = other._x;
 	_y = other._y;
 	_colorPair = other._colorPair;
@@ -49,14 +35,10 @@ NTGraphicObject::NTGraphicObject(const NTGraphicObject& other)
 	//notifyObservers();
 }
 
-/*!	\brief		Destructor
- */
-//NTGraphicObject::~NTGraphicObject() = default;
+// Destructor
+NTGraphicObject::~NTGraphicObject() = default;
 
-/*!	\brief		Assignment operator
- *	\param		other	Reference to source NTLabel object
- *	\return		Reference to the assigned NTLabel object
- */
+// Assignment operator
 NTGraphicObject& NTGraphicObject::operator=(const NTGraphicObject& other)
 {
 	if (this != &other) {
@@ -76,9 +58,7 @@ NTGraphicObject& NTGraphicObject::operator=(const NTGraphicObject& other)
 	return *this;
 }
 
-/*!	\brief		Set X coordinate position
- *	\param		x	New X coordinate value
- */
+// Set X coordinate position
 void NTGraphicObject::setx(int x)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -87,18 +67,14 @@ void NTGraphicObject::setx(int x)
 	//notifyObservers();
 }
 
-/*!	\brief		Get X coordinate position
- *	\return		Current X coordinate value
- */
+// Get X coordinate position
 int NTGraphicObject::x() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _x;
 }
 
-/*!	\brief		Set Y coordinate position
- *	\param		y	New Y coordinate value
- */
+// Set Y coordinate position
 void NTGraphicObject::sety(int y)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -107,19 +83,14 @@ void NTGraphicObject::sety(int y)
 	//notifyObservers();
 }
 
-/*!	\brief		Get Y coordinate position
- *	\return		Current Y coordinate value
- */
+// Get Y coordinate position
 int NTGraphicObject::y() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _y;
 }
 
-/*! \brief      Sets the X, Y coordinate
- *  \param[in]	x   New X coordinate value
- *	\param[in]	y   New Y coordinate value
- */
+// Sets the X, Y coordinate
 void NTGraphicObject::setPosition(int x, int y)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -128,9 +99,7 @@ void NTGraphicObject::setPosition(int x, int y)
 	//notifyObservers();
 }
 
-/*!	\brief		Set text color
- *	\param		color	New text color value
- */
+// Set text color
 void NTGraphicObject::setColorPair(unsigned char colorPair)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -139,18 +108,14 @@ void NTGraphicObject::setColorPair(unsigned char colorPair)
 	//notifyObservers();
 }
 
-/*!	\brief		Get text color
- *	\return		Current text color value
- */
+// Get text color
 unsigned char NTGraphicObject::colorPair() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _colorPair;
 }
 
-/*! \brief      Sets the ncurses attr
- *  \param      attr New ncurses attr value
- */
+// Sets the ncurses attr
 void NTGraphicObject::setAttr(chtype attr)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -159,18 +124,14 @@ void NTGraphicObject::setAttr(chtype attr)
 	//notifyObservers();
 }
 
-/*! \brief      Gets the ncurses attr
- *  \return     ncurses attr value
- */
+// Gets the ncurses attr
 chtype NTGraphicObject::attr() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _attr;
 }
 
-/*!	\brief		Set nt attr
- *	\param		ntattr	nt attr value
- */
+// Set nt attr
 void NTGraphicObject::setNtattr(unsigned char ntattr)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -179,18 +140,14 @@ void NTGraphicObject::setNtattr(unsigned char ntattr)
 	//notifyObservers();
 }
 
-/*!	\brief		Get nt attr
- *	\return		ntattr	nt attr value
- */
+//Get nt attr
 unsigned char NTGraphicObject::ntattr() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _ntattr;
 }
 
-/*! \brief      Gets the Text Label changed flag
- *  \return     true if changed false otherwise
- */
+// Gets the Text Label changed flag
 bool NTGraphicObject::isChanged() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);

@@ -15,7 +15,7 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 	0,								// Color pair to draw from the palette
 	A_NORMAL,						// attr
 	NTA_NONE),						// nattr
-	_image({""}),					// image
+	_image({{""}, 0, 0}),			// image
 	_width(0), _height(0)			// width, height
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -24,7 +24,7 @@ NTImage::NTImage(NTObject* parent, const std::string& name)
 
 // Parameterized constructor
 NTImage::NTImage(NTObject *parent, const std::string& name,
-			   const std::vector<std::string>& image,	//  Может быть сделать структуру?
+			   const struct nt::Image& image,
 			   int x, int y, unsigned char colorPair, chtype attr, unsigned char ntattr)
 	: NTGraphicObject(parent, name,	// parent, name
 	x, y,							// x, y coordinate of the left-top corner of the image
@@ -33,9 +33,7 @@ NTImage::NTImage(NTObject *parent, const std::string& name,
 	ntattr),						// ntattr
 	_image(image)					// image
 {
-	// To do... width, height
 	std::lock_guard<std::mutex> lock(_mutex);
-	//_height = image.size();
 	//notifyObservers();
 }
 
@@ -48,7 +46,6 @@ NTImage::NTImage(const NTImage& other)
 	other._ntattr),									// ntattr
 	_image(other._image)							// image
 {
-    // To do... width, height, chanals
 	std::lock_guard<std::mutex> lock(_mutex);
 	//notifyObservers();
 }
@@ -71,14 +68,14 @@ NTImage& NTImage::operator=(const NTImage& other)
 		_colorPair = other._colorPair;
 		_attr = other._attr;
 		_ntattr = other._ntattr;
-		_changed = true;	// !!!
+		_changed = true;
 	}
 	//notifyObservers();
 	return *this;
 }
 
 // Sets the image data
-void NTImage::setImage(const std::vector<std::string>& image)
+void NTImage::setImage(const struct nt::Image& image)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	_image = image;
@@ -87,7 +84,7 @@ void NTImage::setImage(const std::vector<std::string>& image)
 }
 
 // Gets the image data
-const std::vector<std::string>& NTImage::image() const
+const struct nt::Image& NTImage::image() const
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _image;
@@ -136,55 +133,80 @@ int NTImage::draw()
 	getmaxyx(stdscr, max_y, max_x);
 
 	// Check if Y-position is out of bounds or no need to draw
-	if ( _y+_height < 0 || _y >= max_y ) {
+	if ( _y+_height < 0 || _y > max_y ) {
 		result |= NT_ERR_RANGE_Y;	// Position Y completely out of bounds
 	}
 
 	// Check if X-position is out of bounds or no need to draw
-	if ( _x+_width < 0 || _x >= max_x) {
+	if ( _x+_width < 0 || _x > max_x) {
 		result |= NT_ERR_RANGE_X;	// Position X completely out of bounds
 	}
 
 	// Position (Y, X) completely out of bounds
 	if(NT_OK != result) return result;
-/*
-	// Check if position is out of bounds
-	if (_y < 0 || _y >= max_y || _x < 0 || _x >= max_x) {
-		return NT_ERR_RANGE_X;  // Position completely out of bounds
+
+	// Get the start of character and length
+	int visible_vstart = 0;
+	int visible_vlength = 0;
+	int visible_hstart = 0;
+	int visible_hlength = 0;
+
+	// Check if visible y-position
+	if(_y < 0) {
+		visible_vstart = 0 - _y;
 	}
 
-	// Calculate visible portion of image
-	size_t visible_width = _width;
-	if (_x + visible_width > static_cast<size_t>(max_x)) {
-		visible_width = max_x - _x;
+	visible_vlength = std::min({
+		static_cast<int>(_height),
+		static_cast<int>(_image.height),
+		static_cast<int>(_image.img.size())
+	});
+
+	if(visible_vlength + _y > max_y) {
+		visible_vlength = max_y - _y;
 	}
 
-	size_t visible_height = _height;
-	if (_y + visible_height > static_cast<size_t>(max_y)) {
-		visible_height = max_y - _y;
-	}
+	// If text is invisible
+	if(NT_OK != result) return result;
 
-	// If no visible characters left
-	if (visible_width <= 0 || visible_height <= 0) {
-		return NT_ERR_RANGE_X;
-	}
-*/
 	// Draw visible portion
-	//for (size_t y = 0; y < _image.size() && (_y + static_cast<int>(y)) < static_cast<int>(visible_height); y++) {
-	for (size_t y = 0; y < _image.size(); y++) {
-		//if (_y + static_cast<int>(y) < 0) continue;
-		const std::string& line = _image[y];
-		//for (size_t x = 0; x < line.size() && (_x + static_cast<int>(x)) < static_cast<int>(visible_width); x++) {
-		for (size_t x = 0; x < line.size(); x++) {
-			//if (_x + static_cast<int>(x) < 0) continue;
-			// Перемещаем курсор в позицию y, x и считываем атрибуты
-			result = move(_y + static_cast<int>(y), _x + static_cast<int>(x));
-			//
-			chtype ch = inch();					//
-			int color_pair = PAIR_NUMBER(ch);	//
-			int attributes = ch & A_ATTRIBUTES;	//
+	for(int y = visible_vstart; y < visible_vlength; y++){
+		//
+		const std::string& line = _image.img[y];
 
-			// Если атрибуты для текста
+		// If no visible characters left
+		if (visible_vlength <= 0) {
+			result |=  NT_ERR_INVISIBLE_Y;
+		}
+
+		// Check if visible x-position
+		if(_x < 0) {
+			visible_hstart = 0 - _x;
+		}
+
+		visible_hlength = line.length();
+
+		if(visible_hlength + _x > max_x) {
+			visible_hlength = max_x - _x;
+		}
+
+		// If no visible characters left
+		if (visible_hlength <= 0) {
+			result |=  NT_ERR_INVISIBLE_X;
+			continue;
+		}
+
+		//
+		for(int x = visible_hstart; x < visible_hlength; x++){
+			// Move cursor to the x, y - position to get the attrs
+			result = move(_y + y, _x + x);
+
+			// Get the attrs in the current cursor position
+			chtype ch = inch();					// Get character and attrs
+			int color_pair = PAIR_NUMBER(ch);	// Get color pair
+			int attributes = ch & A_ATTRIBUTES;	// Get attr
+
+			// If attrs for the text then...
 			if( _ntattr & NTA_TEXT_ATTR ){
 				if(line.at(x) != ' '){
 					color_pair = _colorPair;
@@ -192,7 +214,7 @@ int NTImage::draw()
 				}
 			}
 
-			// Если атрибуты для пробела
+			// If attr for the space then...
 			if( _ntattr & NTA_SPACE_ATTR ){
 				if(line.at(x) == ' '){
 					color_pair = _colorPair;
@@ -200,7 +222,7 @@ int NTImage::draw()
 				}
 			}
 
-			// // Готовим символ для вывода
+			// Prepare character to print in terminal
 			if( _ntattr & NTA_SPACE_TRANSPARENT ){
 				if(line.at(x) == ' '){
 					ch = inch();
@@ -211,13 +233,13 @@ int NTImage::draw()
 				ch = line.at(x);
 			}
 
-			// Устанавливаем атрибуты, цвет и фон знакоместа
+			// Set the attrs, color, background color
 			result = attron(COLOR_PAIR(color_pair) | attributes);
 
-			// Выводим символ
+			// Print character
 			result = addch(ch);
 
-			// Выключаем атрибуты
+			// Unset attrs
 			result = attroff(COLOR_PAIR(color_pair) | attributes);
 		}
 	}

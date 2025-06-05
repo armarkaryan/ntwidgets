@@ -56,7 +56,7 @@ public:
 	 *	\param      ntattr		nt attr for the image
 	 */
 	NTImage(NTObject *parent, const std::string& name,
-			const std::vector<std::string>& image,
+			const struct nt::Image& image,
 			int x, int y, unsigned char colorPair, chtype attr, unsigned char ntattr);
 
 	/*! \brief  Destructor */
@@ -76,12 +76,12 @@ public:
 	/*! \brief      Sets the image data
 	 *  \param      image   Vector of strings representing the new image data
 	 */
-	void setImage(const std::vector<std::string>& image);
+	void setImage(const struct nt::Image& image);
 
 	/*! \brief      Gets the image data
 	 *  \return     Constant reference to the image data vector
 	 */
-	const std::vector<std::string>& image() const;
+	const struct nt::Image& image() const;
 
 	/*! \brief      Sets the image width
 	 *  \param      width   New width value
@@ -111,7 +111,7 @@ public:
 	int draw() override;
 
 private:
-	std::vector<std::string> _image;	/*!< Image data storage */
+	struct nt::Image _image;			/*!< Image data storage */
 	unsigned int _width;				/*!< Image width */
 	unsigned int _height;				/*!< Image height */
 };
