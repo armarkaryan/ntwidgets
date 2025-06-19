@@ -8,8 +8,8 @@
 //#include "ntpalette.h"
 #include "ntlabel.h"
 #include "ntimage.h"
-#include "digits_8x8.h"
-#include "digits_16x16.h"
+#include "../res/digits_8x8.h"
+#include "../res/digits_16x16.h"
 
 #include <sstream>  // for ostringstream
 #include <iomanip>  // for setw, setfill
