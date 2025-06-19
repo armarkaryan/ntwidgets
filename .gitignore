@@ -1,0 +1,10 @@
+build/
+obj/
+*.creator
+*.creator.user
+*.config
+*.cflags
+*.cxxflags
+*.files
+*.includes
+commits.txt
